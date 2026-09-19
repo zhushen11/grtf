@@ -90,14 +90,14 @@ tailwind.config={theme:{extend:{colors:{
    <!-- ==================== 视图：文件广场 ==================== -->
   <div id="view-files" class="fade-in">
     <div class="text-center py-8 fade-in">
-      <h1 class="text-3xl sm:text-4xl font-bold text-white">文件共享与资源广场</h1>
+      <h1 class="text-3xl sm:text-4xl font-bold text-white">资源广场</h1>
       <p class="text-slate-400 mt-3">上传、下载、在线预览图片 / 视频 / 文本 / 文档 · 服务器状态实时可见</p>
       <div class="flex justify-center gap-4 mt-6 flex-wrap">
         <div class="stat-card flex items-center gap-3"><i class="fa fa-file-o text-indigo-400 text-xl"></i><div><div class="text-2xl font-bold text-white" id="stat-count">0</div><div class="text-xs text-slate-400">共享文件</div></div></div>
         <div class="stat-card flex items-center gap-3"><i class="fa fa-database text-emerald-400 text-xl"></i><div><div class="text-2xl font-bold text-white" id="stat-size">0 B</div><div class="text-xs text-slate-400">存储总量</div></div></div>
         <div class="stat-card flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-success pulse-dot"></span><div><div class="text-2xl font-bold text-white">在线</div><div class="text-xs text-slate-400">服务状态</div></div></div>
       </div>
-      <div class="mt-4 text-xs text-slate-500"><i class="fa fa-info-circle mr-1"></i>游客可浏览与下载 · 登录后可上传文件 · 超级管理员可管理全部内容</div>
+      <div class="mt-4 text-xs text-slate-500"><i class="fa fa-info-circle mr-1"></i>游客可浏览与下载 · 登录后可上传文件 </div>
     </div>
 
     <div class="flex flex-wrap gap-3 mb-5 items-center">
@@ -168,8 +168,8 @@ tailwind.config={theme:{extend:{colors:{
     <div class="glass-card p-5">
       <h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-server text-slate-400"></i>系统信息</h3>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        <div><div class="text-slate-500 text-xs">运行环境</div><div class="text-slate-200 mt-1 font-medium">Web 浏览器（单文件应用）</div></div>
-        <div><div class="text-slate-500 text-xs">数据存储</div><div class="text-slate-200 mt-1 font-medium">LocalStorage 本地持久化</div></div>
+        <div><div class="text-slate-500 text-xs">运行环境</div><div class="text-slate-200 mt-1 font-medium">Webuils</div></div>
+        <div><div class="text-slate-500 text-xs">数据存储</div><div class="text-slate-200 mt-1 font-medium">LocalStorage </div></div>
         <div><div class="text-slate-500 text-xs">文件总数</div><div id="dash-fcount" class="text-slate-200 mt-1 font-medium">0</div></div>
         <div><div class="text-slate-500 text-xs">当前角色</div><div id="dash-role" class="text-slate-200 mt-1 font-medium">游客</div></div>
       </div>
