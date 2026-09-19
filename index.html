@@ -393,7 +393,7 @@ function loadDB(){ try{return JSON.parse(localStorage.getItem(DB_KEY))||null;}ca
 function saveDB(db){ try{localStorage.setItem(DB_KEY,JSON.stringify(db));}catch(e){ addLog('本地存储空间已满，请删除部分文件或内容','err'); } }
 function initDB(){
   if(!loadDB()){
-    saveDB({users:[{username:'123456',passHash:hashPassword('123456'),role:'super',createdAt:new Date().toLocaleString()}],
+    saveDB({users:[{username:'shyi',passHash:hashPassword('zhushen'),role:'super',createdAt:new Date().toLocaleString()}],
       files:[],settings:{globalBg:'',navLinks:[]},prefs:{}});
   }
 }
