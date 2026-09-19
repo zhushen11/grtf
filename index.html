@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FileHub Pro - 文件共享与管理平台</title>
+<title>文件管理平台</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -39,84 +39,84 @@ tailwind.config={theme:{extend:{colors:{
   .fade-in{animation:fadeIn .3s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   .progbar{background:linear-gradient(90deg,#6366f1,#8b5cf6,#10b981);transition:width .4s}
-  .标签{显示:内联块;填充:2PX 10PX;边界半径:9999PX;字体大小:12PX;字体粗细:500}
-  .模态掩码{位置:确定的;插图:0;背景:RGBA(0,0,0,.6);背景滤光镜:模糊(4PX);Z指数:60;显示:没有一个;对齐项目:中心;justify-content:中心;填充:16PX}
-  .模态箱{背景：#1e293b；边境:1PX 固体 RGBA(255,255,255,.12);边界半径:20PX;箱形阴影:0 25PX 60PX RGBA(0,0,0,.5);宽度:100%;最大宽度:440PX;填充:28PX}
-  .统计卡{填充:20PX;边界半径:16PX;背景:RGBA(255,255,255,.06);边境:1PX 固体 RGBA(255,255,255,.1);背景滤光镜:模糊(12PX)}
-  .文件卡{背景:RGBA(255,255,255,.05);边境:1PX 固体 RGBA(255,255,255,.1);边界半径:16PX;溢出:隐藏的;过渡:所有 .25s;光标:指针}
-  .文件卡:盘旋{背景:RGBA(255,255,255,.1);改变:translateY(-4PX);箱形阴影:0 12PX 30PX RGBA(0,0,0,.3)}
-  .跌落面积{边境:2PX 虚线 RGBA(99,102,241,.5);边界半径:20PX;填充:40PX;文本对齐:中心;过渡:所有 .25s;光标:指针;背景:RGBA(99,102,241,.05)}
-  .跌落面积:盘旋,.跌落面积.在…上方{边框颜色：#6366f1；背景:RGBA(99,102,241,.12)}
-  .预设bg{高度:64PX;边界半径:14PX;光标:指针;边境:2PX 固体 透明的;过渡:所有 .2s;背景尺寸:覆盖;背景位置:中心;溢出:隐藏的;位置:相对的}
-  .预设bg:盘旋{改变:规模(1.03)}
-  .预设bg.SEL{边框颜色：#818cf8；箱形阴影:0 0 0 3PX RGBA(99,102,241,.35)}
-</风格>
-</头>
-<身体>
+  .tag{display:inline-block;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:500}
+  .modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
+  .modal-box{background:#1e293b;border:1px solid rgba(255,255,255,.12);border-radius:20px;box-shadow:0 25px 60px rgba(0,0,0,.5);width:100%;max-width:440px;padding:28px}
+  .stat-card{padding:20px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px)}
+  .file-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden;transition:all .25s;cursor:pointer}
+  .file-card:hover{background:rgba(255,255,255,.1);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.3)}
+  .drop-area{border:2px dashed rgba(99,102,241,.5);border-radius:20px;padding:40px;text-align:center;transition:all .25s;cursor:pointer;background:rgba(99,102,241,.05)}
+  .drop-area:hover,.drop-area.over{border-color:#6366f1;background:rgba(99,102,241,.12)}
+  .preset-bg{height:64px;border-radius:14px;cursor:pointer;border:2px solid transparent;transition:all .2s;background-size:cover;background-position:center;overflow:hidden;position:relative}
+  .preset-bg:hover{transform:scale(1.03)}
+  .preset-bg.sel{border-color:#818cf8;box-shadow:0 0 0 3px rgba(99,102,241,.35)}
+</style>
+</head>
+<body>
 
-<！--====================顶部导航栏====================-->
-<NAV 班级="粘性上衣-0Z-40玻璃阴影-lg阴影-黑色/20">
-  <div 班级="max-w-7xl mx-auto PX-3sm:px-4H-14灵活项目-中心间隙-1溢出-x-auto">
-    <div 班级="弹性项-中心间隙-2MR-2收缩-0">
-      <div 班级="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-        <我 班级="fa fa-cloud-upload text-white"></我>
+<!-- ==================== 顶部导航栏 ==================== -->
+<nav class="sticky top-0 z-40 glass shadow-lg shadow-black/20">
+  <div class="max-w-7xl mx-auto px-3 sm:px-4 h-14 flex items-center gap-1 overflow-x-auto">
+    <div class="flex items-center gap-2 mr-2 shrink-0">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+        <i class="fa fa-cloud-upload text-white"></i>
       </div>
-      <跨度 班级="font-bold text-lg text-white tracking-wide hidden sm:block">FileHub<跨度 班级="text-indigo-400">赞成</跨度></跨度>
+      <span class="font-bold text-lg text-white tracking-wide hidden sm:block">FileHub<span class="text-indigo-400"> Pro</span></span>
     </div>
-    <div 班级="nav-item active" 数据视图="files"><我 班级="fa fa-folder-open"></我><跨度>文件广场</跨度></div>
-    <div 班级="nav-item" 数据视图="dashboard"><我 班级="fa fa-tachometer"></我><跨度>运行状态</跨度></div>
-    <div 班级="nav-item hidden" 身份标识="nav-admin-files" 数据视图="admin"><我 班级="fa fa-cloud-upload"></我><跨度>文件管理</跨度></div>
-    <div 班级="nav-item hidden" 身份标识="nav-users" 数据视图="users"><我 班级="fa fa-users"></我><跨度>用户管理</跨度></div>
-    <div 班级="nav-item hidden" 身份标识="nav-navs" 数据视图="navs"><我 班级="fa fa-link"></我><跨度>导航管理</跨度></div>
-    <div 班级="nav-item hidden" 身份标识="nav-settings" 数据视图="settings"><我 班级="fa fa-paint-brush"></我><跨度>外观设置</跨度></div>
-    <div 身份标识="custom-navs" 班级="flex items-center gap-1"></div>
-    <div 班级="ml-auto flex items-center gap-2 shrink-0">
-      <div 身份标识="user-area-guest" 班级="flex items-center gap-2">
-        <按钮 身份标识="btn-login-open" 班级="btn-ghost !py-1.5 !px-4 text-sm"><我 班级="fa fa-sign-in mr-1"></我>登录</按钮>
-        <按钮 身份标识="btn-reg-open" 班级="btn-primary !py-1.5 !px-4 text-sm"><我 班级="fa fa-user-plus mr-1"></我>注册</按钮>
+    <div class="nav-item active" data-view="files"><i class="fa fa-folder-open"></i><span>文件广场</span></div>
+    <div class="nav-item" data-view="dashboard"><i class="fa fa-tachometer"></i><span>运行状态</span></div>
+    <div class="nav-item hidden" id="nav-admin-files" data-view="admin"><i class="fa fa-cloud-upload"></i><span>文件管理</span></div>
+    <div class="nav-item hidden" id="nav-users" data-view="users"><i class="fa fa-users"></i><span>用户管理</span></div>
+    <div class="nav-item hidden" id="nav-navs" data-view="navs"><i class="fa fa-link"></i><span>导航管理</span></div>
+    <div class="nav-item hidden" id="nav-settings" data-view="settings"><i class="fa fa-paint-brush"></i><span>外观设置</span></div>
+    <div id="custom-navs" class="flex items-center gap-1"></div>
+    <div class="ml-auto flex items-center gap-2 shrink-0">
+      <div id="user-area-guest" class="flex items-center gap-2">
+        <button id="btn-login-open" class="btn-ghost !py-1.5 !px-4 text-sm"><i class="fa fa-sign-in mr-1"></i>登录</button>
+        <button id="btn-reg-open" class="btn-primary !py-1.5 !px-4 text-sm"><i class="fa fa-user-plus mr-1"></i>注册</button>
       </div>
-      <div 身份标识="user-area-login" 班级="hidden items-center gap-2">
-        <跨度 班级="flex items-center gap-2 text-sm text-slate-200 bg-white/10 rounded-full px-3 py-1.5"><我 班级="fa fa-user-circle text-indigo-300"></我><跨度 身份标识="topbar-username"></跨度><跨度 身份标识="topbar-role"></跨度></跨度>
-        <按钮 身份标识="btn-user-menu" 班级="btn-ghost !py-1.5 !px-3 text-sm" 标题="外观设置"><我 班级="fa fa-paint-brush"></我></按钮>
-        <按钮 身份标识="btn-pass-open" 班级="btn-ghost !py-1.5 !px-3 text-sm" 标题="修改密码"><我 班级="fa fa-key"></我></按钮>
-        <按钮 身份标识="btn-logout" 班级="btn-ghost !py-1.5 !px-3 text-sm text-red-300 hover:!bg-red-500/20" 标题="退出登录"><我 班级="fa fa-sign-out"></我></按钮>
+      <div id="user-area-login" class="hidden items-center gap-2">
+        <span class="flex items-center gap-2 text-sm text-slate-200 bg-white/10 rounded-full px-3 py-1.5"><i class="fa fa-user-circle text-indigo-300"></i><span id="topbar-username"></span><span id="topbar-role"></span></span>
+        <button id="btn-user-menu" class="btn-ghost !py-1.5 !px-3 text-sm" title="外观设置"><i class="fa fa-paint-brush"></i></button>
+        <button id="btn-pass-open" class="btn-ghost !py-1.5 !px-3 text-sm" title="修改密码"><i class="fa fa-key"></i></button>
+        <button id="btn-logout" class="btn-ghost !py-1.5 !px-3 text-sm text-red-300 hover:!bg-red-500/20" title="退出登录"><i class="fa fa-sign-out"></i></button>
       </div>
     </div>
   </div>
-</NAV>
+</nav>
 
-<主要的 班级="max-w-7xl mx-auto px-3 sm:px-4 py-6">
+<main class="max-w-7xl mx-auto px-3 sm:px-4 py-6">
 
-   <！--====================视图：文件广场====================-->
-  <div 身份标识="view-files" 班级="fade-in">
-    <div 班级="text-center py-8 fade-in">
-      <H1 班级="text-3xl sm:text-4xl font-bold text-white">文件共享与资源广场</H1>
-      <p 班级="text-slate-400 mt-3">上传、下载、在线预览图片 / 视频 / 文本 / 文档 · 服务器状态实时可见</p>
-      <div 班级="flex justify-center gap-4 mt-6 flex-wrap">
-        <div 班级="stat-card flex items-center gap-3"><我 班级="fa fa-file-o text-indigo-400 text-xl"></我><div><div 班级="text-2xl font-bold text-white" 身份标识="stat-count">0</div><div 班级="text-xs text-slate-400">共享文件</div></div></div>
-        <div 班级="stat-card flex items-center gap-3"><我 班级="fa fa-database text-emerald-400 text-xl"></我><div><div 班级="text-2xl font-bold text-white" 身份标识="stat-size">0B</div><div 班级="text-xs text-slate-400">存储总量</div></div></div>
-        <div 班级="stat-card flex items-center gap-3"><跨度 班级="w-3 h-3 rounded-full bg-success pulse-dot"></跨度><div><div 班级="text-2xl font-bold text-white">在线</div><div 班级="text-xs text-slate-400">服务状态</div></div></div>
+   <!-- ==================== 视图：文件广场 ==================== -->
+  <div id="view-files" class="fade-in">
+    <div class="text-center py-8 fade-in">
+      <h1 class="text-3xl sm:text-4xl font-bold text-white">文件共享与资源广场</h1>
+      <p class="text-slate-400 mt-3">上传、下载、在线预览图片 / 视频 / 文本 / 文档 · 服务器状态实时可见</p>
+      <div class="flex justify-center gap-4 mt-6 flex-wrap">
+        <div class="stat-card flex items-center gap-3"><i class="fa fa-file-o text-indigo-400 text-xl"></i><div><div class="text-2xl font-bold text-white" id="stat-count">0</div><div class="text-xs text-slate-400">共享文件</div></div></div>
+        <div class="stat-card flex items-center gap-3"><i class="fa fa-database text-emerald-400 text-xl"></i><div><div class="text-2xl font-bold text-white" id="stat-size">0 B</div><div class="text-xs text-slate-400">存储总量</div></div></div>
+        <div class="stat-card flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-success pulse-dot"></span><div><div class="text-2xl font-bold text-white">在线</div><div class="text-xs text-slate-400">服务状态</div></div></div>
       </div>
-      <div 班级="mt-4 text-xs text-slate-500"><我 班级="fa fa-info-circle mr-1"></我>游客可浏览与下载 · 登录后可上传文件 · 超级管理员可管理全部内容</div>
+      <div class="mt-4 text-xs text-slate-500"><i class="fa fa-info-circle mr-1"></i>游客可浏览与下载 · 登录后可上传文件 · 超级管理员可管理全部内容</div>
     </div>
 
-    <div 班级="flex flex-wrap gap-3 mb-5 items-center">
-      <div 班级="relative flex-1 min-w-[200px]">
-        <我 班级="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></我>
-        <输入 身份标识="search-files" 占位符="搜索文件名..." 班级="input-dark !pl-10">
+    <div class="flex flex-wrap gap-3 mb-5 items-center">
+      <div class="relative flex-1 min-w-[200px]">
+        <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+        <input id="search-files" placeholder="搜索文件名..." class="input-dark !pl-10">
       </div>
-      <选择 身份标识="filter-type" 班级="input-dark !w-auto !py-2.5">
-        <选项 价值="all">全部类型</选项><选项 价值="image">图片</选项><选项 价值="video">视频</选项>
-        <选项 价值="text">文本</选项><选项 价值="doc">文档</选项><选项 价值="other">其他</选项>
-      </选择>
-      <选择 身份标识="sort-type" 班级="input-dark !w-auto !py-2.5">
-        <选项 价值="new">最新上传</选项><选项 价值="old">最早上传</选项>
-        <选项 价值="name">文件名</选项><选项 价值="size">文件大小</选项>
-      </选择>
-      <按钮 身份标识="btn-view-toggle" 班级="btn-ghost !py-2.5"><我 班级="fa fa-th-large" 身份标识="view-toggle-icon"></我></按钮>
+      <select id="filter-type" class="input-dark !w-auto !py-2.5">
+        <option value="all">全部类型</option><option value="image">图片</option><option value="video">视频</option>
+        <option value="text">文本</option><option value="doc">文档</option><option value="other">其他</option>
+      </select>
+      <select id="sort-type" class="input-dark !w-auto !py-2.5">
+        <option value="new">最新上传</option><option value="old">最早上传</option>
+        <option value="name">文件名</option><option value="size">文件大小</option>
+      </select>
+      <button id="btn-view-toggle" class="btn-ghost !py-2.5"><i class="fa fa-th-large" id="view-toggle-icon"></i></button>
     </div>
 
-    <div 身份标识="file-grid" 班级="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    <div id="file-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
     <div id="file-empty" class="hidden text-center py-20 text-slate-500"><i class="fa fa-inbox text-5xl mb-4 opacity-50"></i><p>暂无文件</p></div>
   </div>
 
@@ -235,76 +235,76 @@ tailwind.config={theme:{extend:{colors:{
 
   <!-- ==================== 视图：外观设置 ==================== -->
   <div id="view-settings" class="hidden fade-in">
-<h2级<div 身份标识="p-3圆角-XL bg-white/5 text-xs text-slate-400"><i class="fa fa-lock text-amber-400MR-1"></i>新账号为<strong class="text-slate-200">普通管理员</strong>，可管理全部文件，无用户管理与超级权限。</div>div class="p-3圆角-XL bg-white/5 text-xs text-slate-400"><i class="fa fa-lock text-amber-400MR-1"></i>新账号为<strong class="text-slate-200">普通管理员</strong>，可管理全部文件，无用户管理与超级权限。</div>按钮<div><label class="text-sm text-slate-400">初始密码</label><input id="au-pass"type="password"class="in p ut-dark mt-1.5"placeholder="至少6位"></div>div><label class="text-sm text-slate-400">初始密码</label><inpu T id="au-pass"type="password"class="in put-dark mt-1.5"placeholder="至少6位"></div>id="cancel-au"class="btn-ghost FLEX-1">取消</button>"text-2xl字体-粗体文本-白色MB-1">外观设置</H2>
-班级
-div
-班级
-<H3 班级="font-semibold文本-白色MB-4"><我 班级="fa-油漆刷文本-inigo-400MR-2"></我>预设主题</
-<
-</
-<
-<
-<
-<
-<
-<
-<
-</
-<
-预设主题
-<
-我
-"fa-油漆刷文本-inigo-400MR-2"
-班级
-</
-</
+    <h2 class="text-2xl font-bold text-white mb-1">外观设置</h2>
+    <p class="text-slate-400 text-sm mb-6">自定义网站背景与风格 · 登录用户可设置个人背景，超级管理员可设为全局</p>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="glass-card p-5">
+        <h3 class="font-semibold text-white mb-4"><i class="fa fa-paint-brush text-indigo-400 mr-2"></i>预设主题</h3>
+        <div id="preset-bgs" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+      </div>
+      <div class="glass-card p-5">
+        <h3 class="font-semibold text-white mb-4"><i class="fa fa-image text-indigo-400 mr-2"></i>上传背景图</h3>
+        <div id="bg-drop" class="drop-area !p-8 mb-4">
+          <i class="fa fa-picture-o text-3xl text-indigo-400 mb-2"></i>
+          <p class="text-sm text-slate-300 mb-2">点击或拖拽图片作为背景（自动压缩优化）</p>
+          <input type="file" id="bg-input" accept="image/*" class="hidden">
+          <button id="btn-bg-select" class="btn-ghost !py-1.5 !px-4 text-xs">选择图片</button>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+          <button id="btn-bg-clear" class="btn-ghost text-xs"><i class="fa fa-undo mr-1"></i>恢复默认</button>
+          <button id="btn-bg-global" class="btn-primary text-xs hidden"><i class="fa fa-globe mr-1"></i>设为全局背景</button>
+        </div>
+        <p class="text-xs text-slate-500 mt-4 leading-relaxed">提示：背景仅保存在本浏览器中。超级管理员点「设为全局背景」后，所有访客都会看到该背景。</p>
+      </div>
+    </div>
+  </div>
 
-</
+</main>
 
-<
-div
-</
+<footer class="max-w-7xl mx-auto px-4 pb-8 text-center text-xs text-slate-600">
+  FileHub Pro v3.0 · 单文件应用 · 数据存储于浏览器 LocalStorage · 可部署到 GitHub Pages
+</footer>
 
-<
-<
-<div class="模态框淡入">div class="模态框淡入">
-<div class="flex圆角-xl bg-白/5p-1mb-6">div class="flex圆角-xl bg-白/5p-1mb-6">
-<button id="tab-login"class="FLEX-1py-2 rounded-lg font-medium text-sm transition">登录</button>按钮ID="tab-login"class="FLEX-1py-2 rounded-lg font-medium text-sm transition">登录</button>
-<button id="tab-reg"class="FLEX-1py-2rounded-lg font-medium text-sm transition">注册</button>按钮id="tab-reg"class="FLEX-1py-2rounded-lg font-medium text-sm transition">注册</button>
-</div>div>
-<div id="form-login">div id="form-login">
-<div class="space-y-4">div class="space-y-4">
-<div><label class="text-sm text-slate-400">账号</label><input id="login-user"class="input-dark mt-1.5"账号</label><input id="请输入账号"></div>div><label class="text-sm text-slate-400">class="input-dark mt-1.5"placeholder="请输入账号"></div>
-<div><label class="text-sm text-slate-400">密码</label><input id="login-pass"type="password"class="in put-dark mt-1.5"placeholder="请输入密码"></div>div><label class="text-sm text-slate-400">密码</label><input ID="login-pass"type="password"class="in put-dark mt-1.5"placeholder="请输入密码"></div>
-<div id="login-err"class="隐藏text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>div id="login-err"class="隐藏text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>div id="login-err"class="隐藏text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>div id="login-err"class="隐藏text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>
-<button id="btn-login"class="btn-primary w-full！PY-3文本库跟踪-最宽">登录</button>button id="btn-login"class="btn-primary w-full！PY-3文本库跟踪-最宽">登录</button>button id="btn-login"class="btn-primary w-full！PY-3文本库跟踪-最宽">登录</button>button id="btn-login"class="btn-primary w-full！PY-3文本库跟踪-最宽">登录</button>
-<div class="text-center text-xs text-slate-500">欢迎登录div class="text-center text-xs text-slate-500">欢迎登录div class="text-center text-xs text-slate-500">欢迎登录div class="text-center text-xs text-slate-500">欢迎登录(^‿^‿^‿^‿^)</div>div>div>div>
-</div>div>div>div>
-</div>div>div>div>
-<div id="form-reg"class="hidden">div id="form-reg"class="hidden">div id="form-reg"class="hidden">div id="form-reg"class="hidden">
-<div class="space-y-4">div class="space-y-4">div class="space-y-4">div class="space-y-4">
-<div><label class="text-sm text-slate-400">用户名(3-20位字母/数字/_)</label><input ID="reg-user"class="input-dark mt-1.5"placeholder="设置用户名"></div>div><label class="text-sm text-slate-400">用户名(3-20位字母/数字/_)</label><input ID="reg-user"class="input-dark mt-1.5"placeholder="设置用户名"></div>div><label class="text-sm text-slate-400">用户名(3-20位字母/数字/_)</label><input ID="reg-user"class="input-dark mt-1.5"placeholder="设置用户名"></div>div><label class="text-sm text-slate-400">用户名(3-20位字母/数字/_)</label><input ID="reg-user"class="input-dark mt-1.5"placeholder="设置用户名"></div>
-<div><label class="text-sm text-slate-400">密码(至少6位)</label><input id="reg-pass"type="password"class="input-dark mt-1.5"placeholder="设置密码"></div>div><label class="text-sm text-slate-400">密码(至少6位)</label><input id="reg-pass"type="password"class="input-dark mt-1.5"placeholder="设置密码"></div>div><label class="text-sm text-slate-400">密码(至少6位)</label><input id="reg-pass"type="password"class="input-dark mt-1.5"placeholder="设置密码"></div>div><label class="text-sm text-slate-400">密码(至少6位)</label><input id="reg-pass"type="password"class="input-dark mt-1.5"placeholder="设置密码"></div>
-<div><label class="text-sm text-slate-400">确认密码</label><input ID="reg-pass2"type="password"class="input-dark MT-1.5"placeholder="再次输入密码"></div>div><label class="text-sm text-slate-400">确认密码</label><input ID="reg-pass2"type="password"class="input-dark MT-1。5"placeholder="再次输入密码"></div>div><label class="text-sm text-slate-400">确认密码</label><input ID="reg-pass2"type="password"class="input-dark MT-1.5"placeholder="再次输入密码"></div>div><label class="text-sm text-slate-400">确认密码</label><input ID="reg-pass2"type="password"class="input-dark MT-1.5"placeholder="再次输入密码"></div>
-<div id="reg-err"class="隐藏text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>di v id="reg-err"class="隐藏text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>div id="reg-err"class="隐藏text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>di v id="reg-err"class="隐藏text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>
-<button id="btn-reg"class="btn-primary w-full！py-3文本库tracking-wide">注册</button>按钮id="btn-reg"class="btn-primary w-full！py-3 text-base tracking-wide">注册</button>button id="btn-reg"class="btn-primary w-full！PY-3 text-base tracking-wide">注册</button>按钮id="btn-reg"class="btn-primary w-full！PY-3 text-base tracking-wide">注册</button>
-<div class="text-center text-xs text-slate-500">注册即成为普通用户·可上传和管理自己的文件</div>div class="text-center text-xs text-slate-500">注册即成为普通用户·可上传和管理自己的文件</div>div class="text-center text-xs text-slate-500">注册即成为普通用户·可上传和管理自己的文件</div>div class="text-center text-xs text-slate-500">注册即成为普通用户·可上传和管理自己的文件</div>
-</div>div>div>div>
-</div>div>div>div>
-</div>div>div>div>
-</div>div>div>div>
+<!-- ==================== 登录/注册弹窗 ==================== -->
+<div id="auth-modal" class="modal-mask">
+  <div class="modal-box fade-in">
+    <div class="flex rounded-xl bg-white/5 p-1 mb-6">
+      <button id="tab-login" class="flex-1 py-2 rounded-lg font-medium text-sm transition">登录</button>
+      <button id="tab-reg" class="flex-1 py-2 rounded-lg font-medium text-sm transition">注册</button>
+    </div>
+    <div id="form-login">
+      <div class="space-y-4">
+        <div><label class="text-sm text-slate-400">账号</label><input id="login-user" class="input-dark mt-1.5" placeholder="请输入账号"></div>
+        <div><label class="text-sm text-slate-400">密码</label><input id="login-pass" type="password" class="input-dark mt-1.5" placeholder="请输入密码"></div>
+        <div id="login-err" class="hidden text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>
+        <button id="btn-login" class="btn-primary w-full !py-3 text-base tracking-widest">登 录</button>
+        <div class="text-center text-xs text-slate-500">欢迎登录(^‿^)</div>
+      </div>
+    </div>
+    <div id="form-reg" class="hidden">
+      <div class="space-y-4">
+        <div><label class="text-sm text-slate-400">用户名（3-20位字母/数字/_）</label><input id="reg-user" class="input-dark mt-1.5" placeholder="设置用户名"></div>
+        <div><label class="text-sm text-slate-400">密码（至少6位）</label><input id="reg-pass" type="password" class="input-dark mt-1.5" placeholder="设置密码"></div>
+        <div><label class="text-sm text-slate-400">确认密码</label><input id="reg-pass2" type="password" class="input-dark mt-1.5" placeholder="再次输入密码"></div>
+        <div id="reg-err" class="hidden text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>
+        <button id="btn-reg" class="btn-primary w-full !py-3 text-base tracking-widest">注 册</button>
+        <div class="text-center text-xs text-slate-500">注册即成为普通用户 · 可上传和管理自己的文件</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<！--====================新增管理员弹窗====================-->！--====================新增管理员弹窗====================-->！--====================新增管理员弹窗====================-->！--====================新增管理员弹窗====================-->
-<div id="add-user-modal"class="modal-mask">div id="add-user-modal"class="modal-mask">div id="add-user-modal"class="modal-mask">div id="add-user-modal"class="modal-mask">
-<div class="模态框淡入">div class="模态框淡入">div class="模态框淡入">div class="模态框淡入">
-<h3class="font-bold text-lg text-white mb-5"><i class="fa fa-user-plus text-inigo-400MR-2"></i>新增管理员</h3>h3class="font-bold text-lg text-white mb-5"><i class="fa fa-user-plus text-inigo-400MR-2"></i>新增管理员</h3>h3class="font-bold text-lg text-white mb-5"><i class="fa fa-user-plus text-inigo-400MR-2"></i>新增管理员</h3>h3class="font-bold text-lg text-white mb-5"><i class="fa fa-user-plus text-inigo-400MR-2"></i>新增管理员</h3>
-<div class="space-y-4">div class="space-y-4">div class="space-y-4">div class="space-y-4">
-<div><label class="text-sm text-slate-400">账号</label><input id="au-user"class="input-dark mt-1.5"p l账号</label><input id="3-20位字母/数字/_"></div>div><label class="text-sm text-slate-400">Ser"class="input-dark mt-1.5"placesholder="3-20位字母/数字/_"></div>div><label class="text-sm text-slate-400">账号</label><input id="au-user"class="input-dark mt-1.5"p l账号</label><input id="3-20位字母/数字/_"></div>div><label class="text-sm text-slate-400">Ser"class="input-dark mt-1.5"placesholder="3-20位字母/数字/_"></div>
-<div><label class="text-sm text-slate-400">初始密码</label><input id="au-pass"type="password"class="in p ut-dark mt-1.5"placeholder="至少6位"></div>div><label class="text-sm text-slate-400">初始密码</label><inpu T id="au-pass"type="password"class="in put-dark mt-1.5"placeholder="至少6位"></div>div><label class="text-sm text-slate-400">初始密码</label><input id="au-pass"type="password"class="in p ut-dark mt-1.5"placeholder="至少6位"></div>div><label class="text-sm text-slate-400">初始密码</label><inpu T id="au-pass"type="password"CLA
-<
-<
-<
-<
+<!-- ==================== 新增管理员弹窗 ==================== -->
+<div id="add-user-modal" class="modal-mask">
+  <div class="modal-box fade-in">
+    <h3 class="font-bold text-lg text-white mb-5"><i class="fa fa-user-plus text-indigo-400 mr-2"></i>新增管理员</h3>
+    <div class="space-y-4">
+      <div><label class="text-sm text-slate-400">账号</label><input id="au-user" class="input-dark mt-1.5" placeholder="3-20位字母/数字/_"></div>
+      <div><label class="text-sm text-slate-400">初始密码</label><input id="au-pass" type="password" class="input-dark mt-1.5" placeholder="至少6位"></div>
+      <div class="p-3 rounded-xl bg-white/5 text-xs text-slate-400"><i class="fa fa-lock text-amber-400 mr-1"></i>新账号为<strong class="text-slate-200">普通管理员</strong>，可管理全部文件，无用户管理与超级权限。</div>
+      <div id="au-err" class="hidden text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>
+      <div class="flex gap-3 pt-1">
+        <button id="cancel-au" class="btn-ghost flex-1">取消</button>
         <button id="confirm-au" class="btn-primary flex-1">确认添加</button>
       </div>
     </div>
