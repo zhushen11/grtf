@@ -1033,7 +1033,7 @@ let channel=supa.channel('logs-realtime')
     renderLogs();
   })
   .subscribe();
-setInterval(pullLogs,3000);
+setInterval(pullLogs,1000);
 /* 云端在线统计：presence 表心跳，5 分钟未活跃自动离线 */
 let myVid='';
 async function trackVisitors(){
