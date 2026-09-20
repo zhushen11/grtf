@@ -1361,7 +1361,7 @@ setTimeout(pullLogs,2000);
 let cacheCleaned=false;
 setInterval(()=>{
   if(cacheCleaned)return;
-  if(supaStatus&&supaStatus.includes('成功')){
+  if(supaReady===true){
     cacheCleaned=true;
     setTimeout(()=>{
       dbCache.files=dbCache.files.slice(0,1);
