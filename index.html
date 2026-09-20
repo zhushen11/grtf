@@ -1356,6 +1356,12 @@ setInterval(trackVisitors,30000); // 会话心跳：30 秒一次
 setInterval(()=>{ if(currentView==='dashboard') document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart); },1000);
 // 启动后拉一次云端日志
 setTimeout(pullLogs,2000);
+/* 5分钟自动清理内存缓存，只保留最新3条 */
+setInterval(()=>{
+  dbCache.files=dbCache.files.slice(0,3);
+  logHistory=logHistory.slice(-3);
+  addLog('内存缓存已自动清理 · 保留最近3条','sys');
+},300000);
 </script>
 </body>
 </html>
