@@ -1349,7 +1349,7 @@ async function boot(){
 boot();
 
 // 定时器（低频刷新，避免卡顿）
-setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },5000);
+setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },1000);
 setInterval(updateMemChart,5000);
 setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
