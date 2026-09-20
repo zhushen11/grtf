@@ -1037,7 +1037,7 @@ async function trackVisitors(){
 }
 async function refreshOnline(){
   try{
-    const cutoff=new Date(Date.now()-5*60*1000).toISOString();
+    const cutoff=new Date(Date.now()-1*60*1000).toISOString();
     const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
     await Promise.race([supa.from('presence').delete().lt('last_active',cutoff),timeout]);
     const {count}=await supa.from('presence').select('vid',{count:'exact',head:true});
