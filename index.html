@@ -409,14 +409,17 @@ async function fetchAll(){
     supaReady=true; supaStatus='已连接';
 /* 云端启动成功后第5秒，清理缓存只保留1条，只执行一次 */
 setTimeout(()=>{
-  if(dbCache.files.length>1){
-    dbCache.files=dbCache.files.slice(0,1);
-    logHistory=logHistory.slice(-1);
-    renderFiles();
-    renderLogs();
-    updateStats();
-    addLog('启动后缓存清理完成 · 只保留1条','sys');
-  }
+  dbCache.files=dbCache.files.slice(0,1);
+  logHistory=logHistory.slice(-1);
+  /* 直接操作DOM，立即生效 */
+  const list=currentFileList();
+  const box=document.getElementById('file-grid');
+  document.getElementById('file-empty').classList.toggle('hidden',list.length>0);
+  box.innerHTML=list.map(fileCardHtml).join('');
+  loadThumbs();
+  renderLogs();
+  updateStats();
+  addLog('启动后缓存清理完成 · 只保留1条','sys');
 },5000);
 return dbCache;
   }catch(e){
