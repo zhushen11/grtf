@@ -126,7 +126,7 @@ tailwind.config={theme:{extend:{colors:{
     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
       <div>
         <h2 class="text-2xl font-bold text-white">服务器运行状态</h2>
-        <p class="text-slate-400 text-sm mt-1">后台服务实时监测  · <span id="dash-refresh" class="text-slate-500">刚刚更新</span></p>
+        <p class="text-slate-400 text-sm mt-1">后台服务实时监测 · 每 5 秒自动刷新 · <span id="dash-refresh" class="text-slate-500">刚刚更新</span></p>
       </div>
       <div class="flex items-center gap-3">
         <span class="flex items-center gap-2 px-4 py-2 rounded-full bg-success/15 text-success text-sm font-medium border border-success/30">
@@ -161,8 +161,6 @@ tailwind.config={theme:{extend:{colors:{
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
       <div class="glass-card p-5"><h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-pie-chart text-emerald-400"></i>文件类型分布</h3><div class="h-56"><canvas id="chart-type"></canvas></div></div>
       <div class="glass-card p-5 lg:col-span-2">
-        <h3 class="font-bold">📋 实时日志</h3>
-        <h3 class="font-bold">📋 实时日志 <button onclick="clearAll()" class="btn-ghost text-xs ml-2">🧹 清除</button></h3>
         <h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-terminal text-slate-400"></i>实时运行日志 <span class="text-[10px] text-slate-500 font-normal ml-auto">自动滚动</span></h3>
         <div id="log-list" class="h-56 overflow-y-auto font-mono text-xs space-y-1.5 pr-2"></div>
       </div>
@@ -991,59 +989,36 @@ function addLog(msg,type){
   type=type||'info';
   const t=new Date().toLocaleTimeString();
   logHistory.push({t,msg,type});
-  if(logHistory.length>200)logHistory.shift();
+  if(logHistory.length>100)logHistory.shift();
   renderLogs();
-  supa.from('logs').insert({msg,type,username:session?session.username:'游客'}).then(({error})=>{
-    if(error)console.warn('日志写入失败:',error.message);
-  });
+  try{ supa.from('logs').insert({msg,type,username:session?session.username:'游客'}); }catch(e){}
 }
 async function pullLogs(){
   try{
-    const {data,error}=await supa.from('logs').select('msg,type,username,created_at').order('created_at',{ascending:false}).limit(100);
-    if(error){console.warn('日志拉取失败:',error.message);return;}
+    const {data}=await supa.from('logs').select('msg,type,username,created_at').order('created_at',{ascending:false}).limit(50);
     if(data&&data.length>0){
-      const remote=data.map(r=>({
-        t:new Date(r.created_at).toLocaleTimeString(),
+      logHistory=data.reverse().map(r=>({
+        t:(r.created_at||'').slice(11,19),
         msg:(r.username?('['+r.username+'] '):'')+r.msg,
         type:r.type||'info'
       }));
-      const merged=[...remote,...logHistory].slice(0,200);
-      logHistory=merged;
       renderLogs();
     }
-  }catch(e){console.warn('日志拉取异常:',e);}
+  }catch(e){}
 }
 function renderLogs(){
   const box=document.getElementById('log-list');
   if(!box)return;
-  box.innerHTML=logHistory.slice(-50).map(l=>
+  box.innerHTML=logHistory.map(l=>
     `<div class="flex gap-2 leading-relaxed"><span class="text-slate-600 shrink-0">[${l.t}]</span><span class="${LOG_COLORS[l.type]||LOG_COLORS.info} break-all">${escapeHtml(l.msg)}</span></div>`
   ).join('');
   box.scrollTop=box.scrollHeight;
 }
-/* Realtime 实时订阅日志表，任何人一写入马上看到 */
-let channel=supa.channel('logs-realtime')
-  .on('postgres_chords',{event:'INSERT',schema:'public',table:'logs'},payload=>{
-    const r=payload.new;
-    logHistory.push({
-      t:new Date(r.created_at).toLocaleTimeString(),
-      msg:(r.username?('['+r.username+'] '):'')+r.msg,
-      type:r.type||'info'
-    });
-    if(logHistory.length>200)logHistory.shift();
-    renderLogs();
-  })
-  .subscribe();
-/* 同时保留3秒兜底拉取 */
-setInterval(pullLogs,3000);
-/* 心跳日志（仅仪表盘可见时） */
+/* 心跳（不自动产生日志） */
 let heartbeat=0;
 function heartbeatTick(){
   if(currentView!=='dashboard')return;
   heartbeat++;
-  const events=['后台服务心跳检测正常','缓存清理任务执行完成','定时任务调度器已唤醒','数据库连接池状态正常','静态资源检查通过'];
-  addLog('系统 · '+events[heartbeat%events.length],'sys');
-  if(heartbeat%6===0) addLog('心跳 · 5秒周期运行中，累计心跳 '+heartbeat+' 次','ok');
 }
 /* 云端在线统计：presence 表心跳，5 分钟未活跃自动离线 */
 let myVid='';
@@ -1340,14 +1315,11 @@ document.getElementById('btn-bg-global').onclick=()=>{
 
 /* ================= 页面初始化 ================= */
 async function boot(){
-  addLog('正在连接 Supabase 云端…','sys');
   await pingSupabase();
   await fetchAll();
   if(session&&!dbCache.users.some(u=>u.username===session.username)){
     clearSession(); session=null;
   }
-  addLog('FileHub Pro v3.1 云端版启动完成','sys');
-  addLog(supaStatus+' · 延迟 '+supaLatency+'ms · 当前共 '+dbCache.files.length+' 个文件、'+dbCache.users.length+' 个账号','sys');
   trackVisitors();
   refreshDisk();
   renderNav();
@@ -1360,18 +1332,14 @@ async function boot(){
 boot();
 
 // 定时器（低频刷新，避免卡顿）
-setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); } },1000);
+setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },5000);
 setInterval(updateMemChart,5000);
 setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
+setInterval(trackVisitors,30000); // 会话心跳：30 秒一次
 setInterval(()=>{ if(currentView==='dashboard') document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart); },1000);
-// 启动后拉一次云端日至
-  async function clearAll(){
-  await supa.from('logs').delete().neq('id',0);
-  localStorage.clear();
-  sessionStorage.clear();
-  location.reload();
-  }
+// 启动后拉一次云端日志
+setTimeout(pullLogs,2000);
 </script>
 </body>
 </html>
