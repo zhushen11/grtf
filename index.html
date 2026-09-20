@@ -126,7 +126,7 @@ tailwind.config={theme:{extend:{colors:{
     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
       <div>
         <h2 class="text-2xl font-bold text-white">服务器运行状态</h2>
-        <p class="text-slate-400 text-sm mt-1">后台服务实时监测· <span id="dash-refresh" class="text-slate-500">刚刚更新</span></p>
+        <p class="text-slate-400 text-sm mt-1">后台服务实时监测 · 每 5 秒自动刷新 · <span id="dash-refresh" class="text-slate-500">刚刚更新</span></p>
       </div>
       <div class="flex items-center gap-3">
         <span class="flex items-center gap-2 px-4 py-2 rounded-full bg-success/15 text-success text-sm font-medium border border-success/30">
@@ -450,8 +450,7 @@ function debounce(fn,ms=300){ let t=null; return function(...a){ clearTimeout(t)
 /* ================= 全局状态 ================= */
 let session=getSession();
 let viewMode='grid';
-let appStart=sessionStorage.getItem('fh_start')||Date.now();
-sessionStorage.setItem('fh_start',appStart);
+let appStart=Date.now();
 let memChart=null,typeChart=null,memPoints=[],cpuChart=null,cpuPoints=[],logHistory=[],reqCount=0,diskPercent=0;
 let currentView='files';
 let resetTarget='';
@@ -625,8 +624,7 @@ function fileCardHtml(f){
     </div></div>`;
 }
 const renderFiles=debounce(function(){
-  let list=currentFileList();
-  list=list.slice(0,5);  /* 只显示最新5条 */
+  const list=currentFileList();
   const box=document.getElementById('file-grid');
   document.getElementById('file-empty').classList.toggle('hidden',list.length>0);
   box.innerHTML=list.map(fileCardHtml).join('');
@@ -1007,8 +1005,8 @@ async function pullLogs(){
         msg:(r.username?('['+r.username+'] '):'')+r.msg,
         type:r.type||'info'
       }));
-      const merged=[...remote,...logHistory].slice(0,1);
-logHistory=merged;
+      const merged=[...remote,...logHistory].slice(0,200);
+      logHistory=merged;
       renderLogs();
     }
   }catch(e){console.warn('日志拉取异常:',e);}
@@ -1034,7 +1032,7 @@ let channel=supa.channel('logs-realtime')
     renderLogs();
   })
   .subscribe();
-setInterval(pullLogs,1000);
+setInterval(pullLogs,3000);
 /* 云端在线统计：presence 表心跳，5 分钟未活跃自动离线 */
 let myVid='';
 async function trackVisitors(){
@@ -1350,7 +1348,7 @@ async function boot(){
 boot();
 
 // 定时器（低频刷新，避免卡顿）
-setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },1000);
+setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },5000);
 setInterval(updateMemChart,5000);
 setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
@@ -1358,6 +1356,12 @@ setInterval(trackVisitors,30000); // 会话心跳：30 秒一次
 setInterval(()=>{ if(currentView==='dashboard') document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart); },1000);
 // 启动后拉一次云端日志
 setTimeout(pullLogs,2000);
+/* 5分钟自动清理内存缓存，只保留最新3条 */
+setInterval(()=>{
+  dbCache.files=dbCache.files.slice(0,3);
+  logHistory=logHistory.slice(-3);
+  addLog('内存缓存已自动清理 · 保留最近3条','sys');
+},300000);
 </script>
 </body>
 </html>
