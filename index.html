@@ -215,6 +215,112 @@ tailwind.config={theme:{extend:{colors:{
       <i class="fa fa-info-circle mr-1"></i><b>权限说明</b>：超级管理员拥有全部权限，可删除所有文件与所有账号；普通管理员可删除普通用户及其上传的内容；普通用户可上传/下载文件并管理自己的内容。超级管理员账号不可删除。
     </div>
   </div>
+
+  <!-- ==================== 视图：导航管理（超级管理员） ==================== -->
+  <div id="view-navs" class="hidden fade-in">
+    <h2 class="text-2xl font-bold text-white mb-1">导航管理</h2>
+    <p class="text-slate-400 text-sm mb-6">添加自定义按钮，可链接到其他 HTML 页面或外部网址 · 添加后显示在顶部导航栏</p>
+    <div class="glass-card p-5 mb-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div><label class="text-xs text-slate-400 mb-1 block">按钮名称</label><input id="nav-name" class="input-dark" placeholder="例如：关于我们"></div>
+        <div><label class="text-xs text-slate-400 mb-1 block">链接地址（html或网址）</label><input id="nav-url" class="input-dark" placeholder="about.html 或 https://..."></div>
+        <div><label class="text-xs text-slate-400 mb-1 block">图标（FontAwesome）</label><input id="nav-icon" class="input-dark" placeholder="fa-info-circle"></div>
+        <div class="flex items-end"><button id="btn-add-nav" class="btn-primary w-full"><i class="fa fa-plus mr-1"></i>添加导航</button></div>
+      </div>
+    </div>
+    <div class="glass-card overflow-hidden">
+      <div class="px-5 py-3.5 text-slate-400 text-sm font-medium border-b border-white/10">自定义导航列表</div>
+      <div id="nav-list" class="divide-y divide-white/5"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 视图：外观设置 ==================== -->
+  <div id="view-settings" class="hidden fade-in">
+    <h2 class="text-2xl font-bold text-white mb-1">外观设置</h2>
+    <p class="text-slate-400 text-sm mb-6">自定义网站背景与风格 · 登录用户可设置个人背景，超级管理员可设为全局</p>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div class="glass-card p-5">
+        <h3 class="font-semibold text-white mb-4"><i class="fa fa-paint-brush text-indigo-400 mr-2"></i>预设主题</h3>
+        <div id="preset-bgs" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+      </div>
+      <div class="glass-card p-5">
+        <h3 class="font-semibold text-white mb-4"><i class="fa fa-image text-indigo-400 mr-2"></i>上传背景图</h3>
+        <div id="bg-drop" class="drop-area !p-8 mb-4">
+          <i class="fa fa-picture-o text-3xl text-indigo-400 mb-2"></i>
+          <p class="text-sm text-slate-300 mb-2">点击或拖拽图片作为背景（自动压缩优化）</p>
+          <input type="file" id="bg-input" accept="image/*" class="hidden">
+          <button id="btn-bg-select" class="btn-ghost !py-1.5 !px-4 text-xs">选择图片</button>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+          <button id="btn-bg-clear" class="btn-ghost text-xs"><i class="fa fa-undo mr-1"></i>恢复默认</button>
+          <button id="btn-bg-global" class="btn-primary text-xs hidden"><i class="fa fa-globe mr-1"></i>设为全局背景</button>
+        </div>
+        <p class="text-xs text-slate-500 mt-4 leading-relaxed">提示：背景仅保存在本浏览器中。超级管理员点「设为全局背景」后，所有访客都会看到该背景。</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="max-w-7xl mx-auto px-4 pb-8 text-center text-xs text-slate-600">
+  FileHub Pro v3.0 · 单文件应用 · 数据存储于浏览器 LocalStorage · 可部署到 GitHub Pages
+</footer>
+
+<!-- ==================== 登录/注册弹窗 ==================== -->
+<div id="auth-modal" class="modal-mask">
+  <div class="modal-box fade-in">
+    <div class="flex rounded-xl bg-white/5 p-1 mb-6">
+      <button id="tab-login" class="flex-1 py-2 rounded-lg font-medium text-sm transition">登录</button>
+      <button id="tab-reg" class="flex-1 py-2 rounded-lg font-medium text-sm transition">注册</button>
+    </div>
+    <div id="form-login">
+      <div class="space-y-4">
+        <div><label class="text-sm text-slate-400">账号</label><input id="login-user" class="input-dark mt-1.5" placeholder="请输入账号"></div>
+        <div><label class="text-sm text-slate-400">密码</label><input id="login-pass" type="password" class="input-dark mt-1.5" placeholder="请输入密码"></div>
+        <div id="login-err" class="hidden text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>
+        <button id="btn-login" class="btn-primary w-full !py-3 text-base tracking-widest">登 录</button>
+        <div class="text-center text-xs text-slate-500">欢迎登录(^‿^)</div>
+      </div>
+    </div>
+    <div id="form-reg" class="hidden">
+      <div class="space-y-4">
+        <div><label class="text-sm text-slate-400">用户名（3-20位字母/数字/_）</label><input id="reg-user" class="input-dark mt-1.5" placeholder="设置用户名"></div>
+        <div><label class="text-sm text-slate-400">密码（至少6位）</label><input id="reg-pass" type="password" class="input-dark mt-1.5" placeholder="设置密码"></div>
+        <div><label class="text-sm text-slate-400">确认密码</label><input id="reg-pass2" type="password" class="input-dark mt-1.5" placeholder="再次输入密码"></div>
+        <div id="reg-err" class="hidden text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>
+        <button id="btn-reg" class="btn-primary w-full !py-3 text-base tracking-widest">注 册</button>
+        <div class="text-center text-xs text-slate-500">注册即成为普通用户 · 可上传和管理自己的文件</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 新增管理员弹窗 ==================== -->
+<div id="add-user-modal" class="modal-mask">
+  <div class="modal-box fade-in">
+    <h3 class="font-bold text-lg text-white mb-5"><i class="fa fa-user-plus text-indigo-400 mr-2"></i>新增管理员</h3>
+    <div class="space-y-4">
+      <div><label class="text-sm text-slate-400">账号</label><input id="au-user" class="input-dark mt-1.5" placeholder="3-20位字母/数字/_"></div>
+      <div><label class="text-sm text-slate-400">初始密码</label><input id="au-pass" type="password" class="input-dark mt-1.5" placeholder="至少6位"></div>
+      <div class="p-3 rounded-xl bg-white/5 text-xs text-slate-400"><i class="fa fa-lock text-amber-400 mr-1"></i>新账号为<strong class="text-slate-200">普通管理员</strong>，可管理全部文件，无用户管理与超级权限。</div>
+      <div id="au-err" class="hidden text-sm text-red-400 text-center py-1.5 rounded-lg bg-red-500/10"></div>
+      <div class="flex gap-3 pt-1">
+        <button id="cancel-au" class="btn-ghost flex-1">取消</button>
+        <button id="confirm-au" class="btn-primary flex-1">确认添加</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 重置密码弹窗 ==================== -->
+<div id="reset-modal" class="modal-mask">
+  <div class="modal-box fade-in">
+    <h3 class="font-bold text-lg text-white mb-2"><i class="fa fa-undo text-amber-400 mr-2"></i>重置密码</h3>
+    <p class="text-sm text-slate-400 mb-4">为账号 <b id="reset-target" class="text-white"></b> 设置新密码</p>
+    <input id="reset-pass" type="password" class="input-dark mb-1" placeholder="新密码（至少6位）">
+    <div id="reset-err" class="hidden text-sm text-red-400 py-1.5"></div>
+    <div class="flex gap-3 mt-4">
+      <button id="cancel-reset" class="btn-ghost flex-1">取消</button>
       <button id="confirm-reset" class="btn-primary flex-1">确认重置</button>
     </div>
   </div>
@@ -236,6 +342,81 @@ tailwind.config={theme:{extend:{colors:{
     </div>
   </div>
 </div>
+
+<!-- ==================== 预览弹窗 ==================== -->
+<div id="preview-modal" class="modal-mask !bg-black/85">
+  <button id="close-preview" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition text-lg z-10"><i class="fa fa-times"></i></button>
+  <div id="preview-content" class="max-w-[92vw] max-h-[90vh]"></div>
+</div>
+
+<script>
+/* ================================================================
+   FileHub Pro v3.0 · 单文件全栈模拟应用
+   功能：注册/登录 · 权限体系 · 文件管理 · 服务器状态 · 可扩展导航 · 自定义背景
+   使用：保存为 index.html，浏览器打开即可。可部署到 GitHub Pages。
+   扩展：修改下方 NAV_PRESET 可添加内置导航；超级管理员可在「导航管理」动态添加。
+   ================================================================ */
+
+/* ================= 可扩展配置区（手动添加新功能按钮） =================
+   在此数组追加对象即可在顶部导航新增按钮：
+   { name:'按钮名', url:'链接地址(html文件名或网址)', icon:'fa-图标名', target:'_self' }
+   例：{ name:'关于我们', url:'about.html', icon:'fa-info-circle', target:'_self' }
+*/
+const NAV_PRESET = [];
+
+/* ================= 常量与工具 ================= */
+const DB_KEY='filehub_pro_v3';
+const SESSION_KEY='filehub_session_v3';
+const TYPE_IMG=['jpg','jpeg','png','gif','webp','bmp','svg','ico'];
+const TYPE_VID=['mp4','mov','avi','mkv','webm','flv','m4v'];
+const TYPE_TXT=['txt','md','csv','json','log','html','css','js','xml'];
+const TYPE_DOC=['pdf','doc','docx','xls','xlsx','ppt','pptx'];
+const MAX_FILE=500*1024*1024; // 单文件上限 500MB（IndexedDB 大容量存储）
+const TYPE_ICON={image:'fa-file-image-o',video:'fa-file-video-o',text:'fa-file-text-o',doc:'fa-file-text-o',other:'fa-file-o'};
+const TYPE_COLOR={image:'text-sky-400',video:'text-violet-400',text:'text-emerald-400',doc:'text-orange-400',other:'text-slate-400'};
+const PRESET_BGS=[
+  {name:'深邃蓝紫',css:'linear-gradient(135deg,#0f172a,#1e1b4b 50%,#312e81)'},
+  {name:'暗夜紫',css:'linear-gradient(135deg,#0b0f1a,#2e1065 55%,#4c1d95)'},
+  {name:'青绿森林',css:'linear-gradient(135deg,#0f172a,#064e3b 55%,#065f46)'},
+  {name:'暗红晚霞',css:'linear-gradient(135deg,#1c1917,#7f1d1d 55%,#9f1239)'},
+  {name:'深海蓝',css:'linear-gradient(135deg,#082f49,#1e3a8a 55%,#155e75)'},
+  {name:'石墨灰',css:'linear-gradient(135deg,#111827,#1f2937 50%,#334155)'},
+];
+
+/* ================= Supabase 云端配置 ================= */
+const SUPA_URL='https://faepubibkwafdzoiomru.supabase.co';
+const SUPA_KEY='sb_publishable_5Nih_wM1j0JvFEqXb2moaA_eoR8zaoH';
+const supa=supabase.createClient(SUPA_URL,SUPA_KEY);
+let dbCache={users:[],files:[],settings:{globalBg:'',navLinks:[]},prefs:{}};
+let supaReady=false, supaLatency=0, supaStatus='正在连接...';
+
+/* 从 Supabase 加载全部数据到内存缓存 */
+async function fetchAll(){
+  try{
+    const [uRes,fRes,sRes]=await Promise.all([
+      supa.from('users').select('*'),
+      supa.from('files').select('*').order('created_at',{ascending:false}),
+      supa.from('settings').select('*')
+    ]);
+    if(uRes.error) throw uRes.error;
+    dbCache.users=(uRes.data||[]).map(r=>({username:r.username,passHash:r.pass_hash,role:r.role,createdAt:(r.created_at||'').slice(0,19).replace('T',' ')}));
+    dbCache.files=(fRes.data||[]).map(r=>({id:r.id,name:r.name,size:r.size,type:r.type,uploader:r.uploader,time:(r.created_at||'').slice(0,19).replace('T',' ')}));
+    dbCache.settings={globalBg:'',navLinks:[]};
+    (sRes.data||[]).forEach(row=>{
+      if(row.key==='nav_links') dbCache.settings.navLinks=row.value||[];
+      if(row.key==='global_bg') dbCache.settings.globalBg=row.value||'';
+    });
+    supaReady=true; supaStatus='已连接';
+    return dbCache;
+  }catch(e){
+    supaReady=false; supaStatus='连接失败:'+(e.message||e);
+    console.error('Supabase 加载失败:',e);
+    return null;
+  }
+}
+/* 保存设置到 Supabase */
+async function saveSetting(key,value){
+  await supa.from('settings').upsert({key,value});
   if(key==='nav_links') dbCache.settings.navLinks=value;
   if(key==='global_bg') dbCache.settings.globalBg=value;
 }
@@ -474,7 +655,6 @@ document.getElementById('btn-view-toggle').onclick=()=>{
     ?'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'
     :'flex flex-col gap-3';
 };
-
 
 /* ================= IndexedDB 大文件存储（突破 localStorage 5MB 限制） ================= */
 const IDB_NAME='filehub_fs_v3', IDB_STORE='files', LS_MAX=2*1024*1024;
