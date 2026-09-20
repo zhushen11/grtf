@@ -1033,7 +1033,7 @@ let channel=supa.channel('logs-realtime')
   })
   .subscribe();
 /* 同时保留3秒兜底拉取 */
-setInterval(pullLogs,6000);
+setInterval(pullLogs,3000);
 /* 心跳日志（仅仪表盘可见时） */
 let heartbeat=0;
 function heartbeatTick(){
@@ -1358,7 +1358,7 @@ async function boot(){
 boot();
 
 // 定时器（低频刷新，避免卡顿）
-setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },1000);
+setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); } },1000);
 setInterval(updateMemChart,5000);
 setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
