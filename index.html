@@ -824,7 +824,6 @@ async function handleFiles(files){
   }
 }
 
-
 /* ================= 预览 / 下载 / 删除 ================= */
 const previewModal=document.getElementById('preview-modal'), previewContent=document.getElementById('preview-content');
 function filePublicUrl(f,w,h){
@@ -878,13 +877,20 @@ window.deleteFile=async function(id){
   if(!f)return;
   if(!canDeleteFile(f)){ alert('无权限删除该文件：超级管理员可删除全部，管理员可删除普通用户内容，普通用户只能删除自己的'); return; }
   if(!confirm('确定删除文件「'+f.name+'」吗？此操作不可恢复。'))return;
-  try{
-    await supa.storage.from('files').remove([f.id]);
-    await supa.from('files').delete().eq('id',id);
-    await fetchAll();
-    reqCount++; addLog((session?session.username:'未知')+' 删除了「'+f.name+'」','warn');
-    renderFiles(); updateStats(); updateTypeChart();
-  }catch(e){ alert('删除失败：'+e.message); }
+  // 本地立刻删除并刷新 UI（不卡页面）
+  dbCache.files=dbCache.files.filter(x=>x.id!==id);
+  renderFiles(); updateStats(); updateTypeChart();
+  reqCount++; addLog((session?session.username:'未知')+' 删除了「'+f.name+'」','warn');
+  // 后台异步同步云端，不阻塞
+  (async()=>{
+    try{
+      const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
+      await Promise.race([supa.storage.from('files').remove([f.id]),timeout]);
+    }catch(e){ console.warn('Storage 删除超时或失败:',e); }
+    try{
+      await supa.from('files').delete().eq('id',id);
+    }catch(e){ console.warn('数据库记录删除失败:',e); }
+  })();
 };
 
 /* ================= 统计 / 仪表盘 ================= */
@@ -1025,13 +1031,15 @@ async function trackVisitors(){
     sessionStorage.setItem('fh_vid',myVid);
   }
   try{
-    await supa.from('presence').upsert({vid:myVid,username:session?session.username:'游客',last_active:new Date().toISOString()});
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+    await Promise.race([supa.from('presence').upsert({vid:myVid,username:session?session.username:'游客',last_active:new Date().toISOString()}),timeout]);
   }catch(e){}
 }
 async function refreshOnline(){
   try{
     const cutoff=new Date(Date.now()-5*60*1000).toISOString();
-    await supa.from('presence').delete().lt('last_active',cutoff);
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+    await Promise.race([supa.from('presence').delete().lt('last_active',cutoff),timeout]);
     const {count}=await supa.from('presence').select('vid',{count:'exact',head:true});
     const el=document.getElementById('dash-online');
     if(el) el.textContent=count||0;
