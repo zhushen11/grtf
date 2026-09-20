@@ -1362,6 +1362,16 @@ setInterval(()=>{
   logHistory=logHistory.slice(-3);
   addLog('内存缓存已自动清理 · 保留最近3条','sys');
 },300000);
+/* 每分钟检查一次，没人在线就清理全部缓存 */
+setInterval(async ()=>{
+  const {count}=await supa.from('presence').select('*',{count:'exact',head:true});
+  if(count===0){
+    dbCache.files=[];
+    dbCache.users=[];
+    logHistory=[];
+    addLog('无人在线 · 已清理全部内存缓存','sys');
+  }
+},60000);
 </script>
 </body>
 </html>
