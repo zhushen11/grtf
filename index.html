@@ -407,10 +407,7 @@ async function fetchAll(){
       if(row.key==='global_bg') dbCache.settings.globalBg=row.value||'';
     });
     supaReady=true; supaStatus='已连接';
-/* 立即清理缓存只保留1条 */
-dbCache.files=dbCache.files.slice(0,1);
-logHistory=logHistory.slice(-1);
-return dbCache;
+    return dbCache;
   }catch(e){
     supaReady=false; supaStatus='连接失败:'+(e.message||e);
     console.error('Supabase 加载失败:',e);
@@ -628,7 +625,8 @@ function fileCardHtml(f){
     </div></div>`;
 }
 const renderFiles=debounce(function(){
-  const list=currentFileList();
+  let list=currentFileList();
+  list=list.slice(0,5);  /* 只显示最新5条 */
   const box=document.getElementById('file-grid');
   document.getElementById('file-empty').classList.toggle('hidden',list.length>0);
   box.innerHTML=list.map(fileCardHtml).join('');
