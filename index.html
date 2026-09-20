@@ -1357,26 +1357,19 @@ setInterval(trackVisitors,30000); // 会话心跳：30 秒一次
 setInterval(()=>{ if(currentView==='dashboard') document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart); },1000);
 // 启动后拉一次云端日志
 setTimeout(pullLogs,2000);
-/* 云端启动成功后第5秒，清理缓存只保留1条，只执行一次 */
-let cacheCleaned=false;
-setInterval(()=>{
-  if(cacheCleaned)return;
-  if(supaReady===true){
-    cacheCleaned=true;
-    setTimeout(()=>{
-      dbCache.files=dbCache.files.slice(0,1);
-      logHistory=logHistory.slice(-1);
-      const list=currentFileList();
-      const box=document.getElementById('file-grid');
-      document.getElementById('file-empty').classList.toggle('hidden',list.length>0);
-      box.innerHTML=list.map(fileCardHtml).join('');
-      loadThumbs();
-      renderLogs();
-      updateStats();
-      addLog('启动后缓存清理完成 · 只保留1条','sys');
-    },5000);
-  }
-},1000);
+/* 页面加载后第10秒，清理缓存只保留1条，只执行一次 */
+setTimeout(()=>{
+  dbCache.files=dbCache.files.slice(0,1);
+  logHistory=logHistory.slice(-1);
+  const list=currentFileList();
+  const box=document.getElementById('file-grid');
+  document.getElementById('file-empty').classList.toggle('hidden',list.length>0);
+  box.innerHTML=list.map(fileCardHtml).join('');
+  loadThumbs();
+  renderLogs();
+  updateStats();
+  addLog('启动后缓存清理完成 · 只保留1条','sys');
+},10000);
 </script>
 </body>
 </html>
