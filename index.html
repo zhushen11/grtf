@@ -1360,6 +1360,8 @@ setTimeout(pullLogs,2000);
 setTimeout(()=>{
   dbCache.files=dbCache.files.slice(0,1);
   logHistory=logHistory.slice(-1);
+  renderFiles();
+  renderLogs();
   addLog('启动后缓存清理完成 · 只保留1条','sys');
 },5000);
 </script>
