@@ -176,7 +176,8 @@ tailwind.config={theme:{extend:{colors:{
       </div>
     </div>
   </div>
-    const box=document.getElementById('file-grid');
+  
+  const box=document.getElementById('file-grid');
   document.getElementById('file-empty').classList.toggle('hidden',list.length>0);
   box.innerHTML=list.map(fileCardHtml).join('');
   loadThumbs();
