@@ -989,40 +989,37 @@ function addLog(msg,type){
   type=type||'info';
   const t=new Date().toLocaleTimeString();
   logHistory.push({t,msg,type});
-  if(logHistory.length>100)logHistory.shift();
+  if(logHistory.length>200)logHistory.shift();
   renderLogs();
-  try{ supa.from('logs').insert({msg,type,username:session?session.username:'游客'}); }catch(e){}
+  supa.from('logs').insert({msg,type,username:session?session.username:'游客'}).then(({error})=>{
+    if(error)console.warn('日志写入失败:',error.message);
+  });
 }
 async function pullLogs(){
   try{
-    const {data}=await supa.from('logs').select('msg,type,username,created_at').order('created_at',{ascending:false}).limit(50);
+    const {data,error}=await supa.from('logs').select('msg,type,username,created_at').order('created_at',{ascending:false}).limit(100);
+    if(error){console.warn('日志拉取失败:',error.message);return;}
     if(data&&data.length>0){
-      logHistory=data.reverse().map(r=>({
-        t:(r.created_at||'').slice(11,19),
+      const remote=data.map(r=>({
+        t:new Date(r.created_at).toLocaleTimeString(),
         msg:(r.username?('['+r.username+'] '):'')+r.msg,
         type:r.type||'info'
       }));
+      const merged=[...remote,...logHistory].slice(0,200);
+      logHistory=merged;
       renderLogs();
     }
-  }catch(e){}
+  }catch(e){console.warn('日志拉取异常:',e);}
 }
 function renderLogs(){
   const box=document.getElementById('log-list');
   if(!box)return;
-  box.innerHTML=logHistory.map(l=>
+  box.innerHTML=logHistory.slice(-50).map(l=>
     `<div class="flex gap-2 leading-relaxed"><span class="text-slate-600 shrink-0">[${l.t}]</span><span class="${LOG_COLORS[l.type]||LOG_COLORS.info} break-all">${escapeHtml(l.msg)}</span></div>`
   ).join('');
   box.scrollTop=box.scrollHeight;
 }
-/* 心跳日志（仅仪表盘可见时） */
-let heartbeat=0;
-function heartbeatTick(){
-  if(currentView!=='dashboard')return;
-  heartbeat++;
-  const events=['后台服务心跳检测正常','缓存清理任务执行完成','定时任务调度器已唤醒','数据库连接池状态正常','静态资源检查通过'];
-  addLog('系统 · '+events[heartbeat%events.length],'sys');
-  if(heartbeat%6===0) addLog('心跳 · 5秒周期运行中，累计心跳 '+heartbeat+' 次','ok');
-}
+setInterval(pullLogs,3000);
 /* 云端在线统计：presence 表心跳，5 分钟未活跃自动离线 */
 let myVid='';
 async function trackVisitors(){
