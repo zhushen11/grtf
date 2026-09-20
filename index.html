@@ -1033,7 +1033,7 @@ let channel=supa.channel('logs-realtime')
   })
   .subscribe();
 /* 同时保留3秒兜底拉取 */
-setInterval(pullLogs,1000);
+setInterval(pullLogs,6000);
 /* 心跳日志（仅仪表盘可见时） */
 let heartbeat=0;
 function heartbeatTick(){
