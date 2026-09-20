@@ -161,6 +161,8 @@ tailwind.config={theme:{extend:{colors:{
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
       <div class="glass-card p-5"><h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-pie-chart text-emerald-400"></i>文件类型分布</h3><div class="h-56"><canvas id="chart-type"></canvas></div></div>
       <div class="glass-card p-5 lg:col-span-2">
+        <h3 class="font-bold">📋 实时日志</h3>
+        <h3 class="font-bold">📋 实时日志 <button onclick="clearAll()" class="btn-ghost text-xs ml-2">🧹 清除</button></h3>
         <h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-terminal text-slate-400"></i>实时运行日志 <span class="text-[10px] text-slate-500 font-normal ml-auto">自动滚动</span></h3>
         <div id="log-list" class="h-56 overflow-y-auto font-mono text-xs space-y-1.5 pr-2"></div>
       </div>
@@ -1364,6 +1366,12 @@ setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
 setInterval(()=>{ if(currentView==='dashboard') document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart); },1000);
 // 启动后拉一次云端日至
+  async function clearAll(){
+  await supa.from('logs').delete().neq('id',0);
+  localStorage.clear();
+  sessionStorage.clear();
+  location.reload();
+  }
 </script>
 </body>
 </html>
