@@ -1337,19 +1337,38 @@ async function boot(){
 }
 boot();
 
-// 所有数据实时同步：每2秒自动拉取所有数据
+// 记录上次同步的数据，只有变化才重新渲染
+let lastSyncHash = '';
+
 async function syncAllData(){
   try{
+    const oldFilesLen = dbCache.files.length;
+    const oldNavLen = (dbCache.settings.navLinks||[]).length;
+    
     await Promise.all([
-      fetchAll(),      // 同步所有文件和用户数据
-      pullLogs(),      // 同步日志
-      refreshOnline()  // 同步在线人数
+      fetchAll(),
+      pullLogs(),
+      refreshOnline()
     ]);
-    // 刷新导航
+    
+    // 只在数据变化时才重新渲染，避免闪烁
+    const newFilesLen = dbCache.files.length;
+    const newNavLen = (dbCache.settings.navLinks||[]).length;
+    
+    // 刷新导航（每次都刷新，因为导航数据小）
     renderNav();
-    // 刷新文件列表
-    if(currentView==='files') renderFiles();
-    // 刷新仪表盘
+    
+    // 只有文件数量变化才刷新文件列表
+    if(oldFilesLen !== newFilesLen && currentView==='files'){
+      renderFiles();
+    }
+    
+    // 只有导航数量变化才刷新导航管理页面
+    if(oldNavLen !== newNavLen && currentView==='navs'){
+      renderNavList();
+    }
+    
+    // 仪表盘始终刷新（因为有时间在走）
     if(currentView==='dashboard'){
       updateStats();
       updateTypeChart();
@@ -1357,8 +1376,6 @@ async function syncAllData(){
       refreshOnline();
       updateDashboard();
     }
-    // 刷新导航管理页面
-    if(currentView==='navs') renderNavList();
   }catch(e){ console.warn('同步失败:', e); }
 }
 
