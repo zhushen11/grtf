@@ -7,6 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 tailwind.config={theme:{extend:{colors:{
   primary:{DEFAULT:'#6366f1',light:'#818cf8',dark:'#4f46e5'},
@@ -73,7 +74,7 @@ tailwind.config={theme:{extend:{colors:{
     <div class="ml-auto flex items-center gap-2 shrink-0">
       <div id="user-area-guest" class="flex items-center gap-2">
         <button id="btn-login-open" class="btn-ghost !py-1.5 !px-4 text-sm"><i class="fa fa-sign-in mr-1"></i>登录</button>
-        <button id="btn-reg-open" class="btn-primary !py-1.5 !px-4 text-sm"><i class="fa fa-user-plus mr-1"></i>注册</button>
+    <button id="btn-reg-open" class="btn-primary !py-1.5 !px-4 text-sm"><i class="fa fa-user-plus mr-1"></i>注册</button>
       </div>
       <div id="user-area-login" class="hidden items-center gap-2">
         <span class="flex items-center gap-2 text-sm text-slate-200 bg-white/10 rounded-full px-3 py-1.5"><i class="fa fa-user-circle text-indigo-300"></i><span id="topbar-username"></span><span id="topbar-role"></span></span>
@@ -87,7 +88,7 @@ tailwind.config={theme:{extend:{colors:{
 
 <main class="max-w-7xl mx-auto px-3 sm:px-4 py-6">
 
-   <!-- ==================== 视图：文件广场 ==================== -->
+<!-- ==================== 视图：文件广场 ==================== -->
   <div id="view-files" class="fade-in">
     <div class="text-center py-8 fade-in">
       <h1 class="text-3xl sm:text-4xl font-bold text-white">资源广场</h1>
@@ -137,11 +138,11 @@ tailwind.config={theme:{extend:{colors:{
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
       <div class="stat-card"><div class="flex items-center justify-between"><span class="text-xs text-slate-400">运行时长</span><i class="fa fa-clock-o text-indigo-400"></i></div>
         <div id="dash-uptime" class="text-xl xl:text-2xl font-bold text-white mt-2 font-mono">00:00:00</div></div>
-      <div class="stat-card"><div class="flex items-center justify-between"><span class="text-xs text-slate-400">内存占用</span><i class="fa fa-bar-chart text-amber-400"></i></div>
-        <div id="dash-mem" class="text-xl xl:text-2xl font-bold text-white mt-2">0%</div>
+      <div class="stat-card"><div class="flex items-center justify-between"><span class="text-xs text-slate-400">服务器延迟</span><i class="fa fa-wifi text-emerald-400"></i></div>
+        <div id="dash-mem" class="text-xl xl:text-2xl font-bold text-white mt-2">-</div>
         <div class="w-full bg-slate-700/60 rounded-full h-1.5 mt-2"><div id="dash-mem-bar" class="progbar h-1.5 rounded-full" style="width:0%"></div></div></div>
-      <div class="stat-card"><div class="flex items-center justify-between"><span class="text-xs text-slate-400">CPU 使用率</span><i class="fa fa-microchip text-purple-400"></i></div>
-        <div id="dash-cpu" class="text-xl xl:text-2xl font-bold text-white mt-2">0%</div>
+      <div class="stat-card"><div class="flex items-center justify-between"><span class="text-xs text-slate-400">数据库状态</span><i class="fa fa-database text-indigo-400"></i></div>
+        <div id="dash-cpu" class="text-xl xl:text-2xl font-bold text-white mt-2">连接中</div>
         <div class="w-full bg-slate-700/60 rounded-full h-1.5 mt-2"><div id="dash-cpu-bar" class="progbar h-1.5 rounded-full" style="width:0%"></div></div></div>
       <div class="stat-card"><div class="flex items-center justify-between"><span class="text-xs text-slate-400">磁盘占用</span><i class="fa fa-hdd-o text-emerald-400"></i></div>
         <div id="dash-disk" class="text-xl xl:text-2xl font-bold text-white mt-2">读取中…</div>
@@ -153,8 +154,8 @@ tailwind.config={theme:{extend:{colors:{
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-      <div class="glass-card p-5"><h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-line-chart text-indigo-400"></i>内存使用趋势</h3><div class="h-52"><canvas id="chart-mem"></canvas></div></div>
-      <div class="glass-card p-5"><h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-microchip text-purple-400"></i>CPU 使用趋势</h3><div class="h-52"><canvas id="chart-cpu"></canvas></div></div>
+      <div class="glass-card p-5"><h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-line-chart text-indigo-400"></i>服务器延迟趋势</h3><div class="h-52"><canvas id="chart-mem"></canvas></div></div>
+      <div class="glass-card p-5"><h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-database text-purple-400"></i>数据库连接状态</h3><div class="h-52"><canvas id="chart-cpu"></canvas></div></div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
@@ -168,8 +169,8 @@ tailwind.config={theme:{extend:{colors:{
     <div class="glass-card p-5">
       <h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fa fa-server text-slate-400"></i>系统信息</h3>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        <div><div class="text-slate-500 text-xs">运行环境</div><div class="text-slate-200 mt-1 font-medium">Webuils</div></div>
-        <div><div class="text-slate-500 text-xs">数据存储</div><div class="text-slate-200 mt-1 font-medium">LocalStorage </div></div>
+        <div><div class="text-slate-500 text-xs">运行环境</div><div class="text-slate-200 mt-1 font-medium">Web</div></div>
+        <div><div class="text-slate-500 text-xs">数据存储</div><div class="text-emerald-400 mt-1 font-medium">Supabase 云端</div></div>
         <div><div class="text-slate-500 text-xs">文件总数</div><div id="dash-fcount" class="text-slate-200 mt-1 font-medium">0</div></div>
         <div><div class="text-slate-500 text-xs">当前角色</div><div id="dash-role" class="text-slate-200 mt-1 font-medium">游客</div></div>
       </div>
@@ -262,7 +263,7 @@ tailwind.config={theme:{extend:{colors:{
 </main>
 
 <footer class="max-w-7xl mx-auto px-4 pb-8 text-center text-xs text-slate-600">
-  FileHub Pro v3.0 · 单文件应用 · 数据存储于浏览器 LocalStorage · 可部署到 GitHub Pages
+  FileHub Pro v3.1 · 云端版 · Supabase 数据库 · 部署到 GitHub Pages
 </footer>
 
 <!-- ==================== 登录/注册弹窗 ==================== -->
@@ -382,6 +383,44 @@ const PRESET_BGS=[
   {name:'石墨灰',css:'linear-gradient(135deg,#111827,#1f2937 50%,#334155)'},
 ];
 
+/* ================= Supabase 云端配置 ================= */
+const SUPA_URL='https://gykqzvmjohilsxzopdwe.supabase.co';
+const SUPA_KEY='sb_publishable_4SuKagnYKc8bwCGo_FbzWg_UwMivbEB';
+const supa=supabase.createClient(SUPA_URL,SUPA_KEY);
+let dbCache={users:[],files:[],settings:{globalBg:'',navLinks:[]},prefs:{}};
+let supaReady=false, supaLatency=0, supaStatus='正在连接...';
+
+/* 从 Supabase 加载全部数据到内存缓存 */
+async function fetchAll(){
+  try{
+    const [uRes,fRes,sRes]=await Promise.all([
+      supa.from('users').select('*'),
+      supa.from('files').select('*').order('created_at',{ascending:false}),
+      supa.from('settings').select('*')
+    ]);
+    if(uRes.error) throw uRes.error;
+    dbCache.users=(uRes.data||[]).map(r=>({username:r.username,passHash:r.pass_hash,role:r.role,createdAt:(r.created_at||'').slice(0,19).replace('T',' ')}));
+    dbCache.files=(fRes.data||[]).map(r=>({id:r.id,name:r.name,size:r.size,type:r.type,uploader:r.uploader,time:(r.created_at||'').slice(0,19).replace('T',' ')}));
+    dbCache.settings={globalBg:'',navLinks:[]};
+    (sRes.data||[]).forEach(row=>{
+      if(row.key==='nav_links') dbCache.settings.navLinks=row.value||[];
+      if(row.key==='global_bg') dbCache.settings.globalBg=row.value||'';
+    });
+    supaReady=true; supaStatus='已连接';
+    return dbCache;
+  }catch(e){
+    supaReady=false; supaStatus='连接失败:'+(e.message||e);
+    console.error('Supabase 加载失败:',e);
+    return null;
+  }
+}
+/* 保存设置到 Supabase */
+async function saveSetting(key,value){
+  await supa.from('settings').upsert({key,value});
+  if(key==='nav_links') dbCache.settings.navLinks=value;
+  if(key==='global_bg') dbCache.settings.globalBg=value;
+}
+
 function hashPassword(str){
   let h1=0xdeadbeef,h2=0x41c6ce57;
   for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}
@@ -389,14 +428,9 @@ function hashPassword(str){
   h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
   return (h2>>>0).toString(16)+(h1>>>0).toString(16);
 }
-function loadDB(){ try{return JSON.parse(localStorage.getItem(DB_KEY))||null;}catch(e){return null;} }
-function saveDB(db){ try{localStorage.setItem(DB_KEY,JSON.stringify(db));}catch(e){ addLog('本地存储空间已满，请删除部分文件或内容','err'); } }
-function initDB(){
-  if(!loadDB()){
-    saveDB({users:[{username:'123456',passHash:hashPassword('123456'),role:'super',createdAt:new Date().toLocaleString()}],
-      files:[],settings:{globalBg:'',navLinks:[]},prefs:{}});
-  }
-}
+function loadDB(){ return dbCache; }
+function saveDB(db){ /* 云端模式：写操作直接走 Supabase，不再用本地缓存写入 */ dbCache=db; }
+function initDB(){ /* Supabase 模式：首次登录时 fetchAll，初始管理员已在 SQL 中创建 */ }
 function getSession(){ try{return JSON.parse(sessionStorage.getItem(SESSION_KEY))||null;}catch(e){return null;} }
 function setSession(s){ sessionStorage.setItem(SESSION_KEY,JSON.stringify(s)); }
 function clearSession(){ sessionStorage.removeItem(SESSION_KEY); }
@@ -511,22 +545,24 @@ document.getElementById('tab-reg').onclick=()=>setAuthTab('reg');
 authModal.onclick=e=>{ if(e.target===authModal) closeAuth(); };
 document.getElementById('btn-login').onclick=doLogin;
 document.getElementById('login-pass').addEventListener('keydown',e=>{ if(e.key==='Enter')doLogin(); });
-function doLogin(){
+async function doLogin(){
   const u=document.getElementById('login-user').value.trim();
   const p=document.getElementById('login-pass').value;
   const err=document.getElementById('login-err'); hideErr(err);
   if(!u||!p){showErr(err,'请输入账号和密码');return;}
-  const db=loadDB();
-  const user=db.users.find(x=>x.username===u&&x.passHash===hashPassword(p));
-  if(!user){showErr(err,'账号或密码错误');return;}
-  session={username:user.username,role:user.role};
-  setSession(session);
-  reqCount++; addLog('账号 '+user.username+' 登录成功（'+roleName(user.role)+'）','ok');
-  closeAuth(); renderNav(); applyBg(); switchView('dashboard');
+  try{
+    const {data,error}=await supa.from('users').select('*').eq('username',u).eq('pass_hash',hashPassword(p)).maybeSingle();
+    if(error) throw error;
+    if(!data){showErr(err,'账号或密码错误');return;}
+    session={username:data.username,role:data.role};
+    setSession(session);
+    reqCount++; addLog('账号 '+data.username+' 登录成功（'+roleName(data.role)+'）','ok');
+    closeAuth(); renderNav(); applyBg(); switchView('dashboard');
+  }catch(e){ showErr(err,'登录失败：'+(e.message||e)); }
 }
 document.getElementById('btn-reg').onclick=doRegister;
 document.getElementById('reg-pass2').addEventListener('keydown',e=>{ if(e.key==='Enter')doRegister(); });
-function doRegister(){
+async function doRegister(){
   const u=document.getElementById('reg-user').value.trim();
   const p=document.getElementById('reg-pass').value;
   const p2=document.getElementById('reg-pass2').value;
@@ -534,16 +570,19 @@ function doRegister(){
   if(!/^[a-zA-Z0-9_]{3,20}$/.test(u)){showErr(err,'用户名需3-20位字母/数字/下划线');return;}
   if(p.length<6){showErr(err,'密码至少6位');return;}
   if(p!==p2){showErr(err,'两次密码不一致');return;}
-  const db=loadDB();
-  if(db.users.some(x=>x.username===u)){showErr(err,'该用户名已被注册');return;}
-  db.users.push({username:u,passHash:hashPassword(p),role:'user',createdAt:new Date().toLocaleString()});
-  saveDB(db);
-  session={username:u,role:'user'};
-  setSession(session);
-  reqCount++; addLog('新用户 '+u+' 注册成功并登录','ok');
-  closeAuth(); renderNav(); applyBg();
-  alert('注册成功！欢迎 '+u+'，已自动登录。');
-  switchView('dashboard');
+  try{
+    const {data:existing}=await supa.from('users').select('username').eq('username',u).maybeSingle();
+    if(existing){showErr(err,'该用户名已被注册');return;}
+    const {error}=await supa.from('users').insert({username:u,pass_hash:hashPassword(p),role:'user'});
+    if(error) throw error;
+    await fetchAll();
+    session={username:u,role:'user'};
+    setSession(session);
+    reqCount++; addLog('新用户 '+u+' 注册成功并登录','ok');
+    closeAuth(); renderNav(); applyBg();
+    alert('注册成功！欢迎 '+u+'，已自动登录。');
+    switchView('dashboard');
+  }catch(e){ showErr(err,'注册失败：'+(e.message||e)); }
 }
 document.getElementById('btn-logout').onclick=()=>{
   clearSession(); session=null; renderNav(); applyBg(); switchView('files');
@@ -694,20 +733,12 @@ function storeLs(id,file){
 }
 /* 缩略图读写：存入 IndexedDB，避免撑爆 localStorage */
 async function getFileThumb(f){
-  if(f.thumb) return f.thumb; // 旧数据兼容（meta 里的 base64）
-  if(storageMode==='ls') return '';
-  try{
-    const t=await idbGet(f.id+'_thumb');
-    if(!t) return '';
-    if(typeof t==='string') return t;       // 新格式：直接存的 dataURL 字符串
-    return URL.createObjectURL(t);          // 旧格式：Blob，转 objectURL
-  }catch(e){ return ''; }
+  // 云端模式：图片直接用 Supabase 图片变换生成缩略图
+  if(f.type==='image') return filePublicUrl(f,480,320);
+  return '';
 }
-async function saveThumb(id,thumb){
-  if(!thumb||storageMode!=='idb') return;
-  try{ await idbPut(id+'_thumb',thumb); }catch(e){} // 直接存 dataURL 字符串
-}
-/* 图片缩略图生成（≤20MB 的图片自动生成 480px 高清缩略图，适配高分屏） */
+async function saveThumb(id,thumb){ /* 云端模式不存本地缩略图 */ }
+/* 图片缩略图生成（本地选择预览用，不上传） */
 function makeThumb(file){
   return new Promise(resolve=>{
     if(!file.type.startsWith('image/')||file.size>20*1024*1024){ resolve(''); return; }
@@ -759,81 +790,63 @@ dropArea.addEventListener('dragover',()=>dropArea.classList.add('over'));
 dropArea.addEventListener('dragleave',()=>dropArea.classList.remove('over'));
 dropArea.addEventListener('drop',e=>{ dropArea.classList.remove('over'); handleFiles(e.dataTransfer.files); });
 fileInput.onchange=()=>{ handleFiles(fileInput.files); fileInput.value=''; };
-function handleFiles(files){
+async function handleFiles(files){
   if(!isLogin()){ alert('请先登录后再上传文件'); return; }
   const statusBox=document.getElementById('upload-status');
-  [...files].forEach((file,idx)=>{
-    const limit=storageMode==='ls'?LS_MAX:MAX_FILE;
-    if(file.size>limit){ alert('当前环境单文件上限 '+formatSize(limit)+'（'+ (storageMode==='ls'?'兼容存储模式，建议用 Chrome/Edge 桌面浏览器打开以解锁大文件':'大容量存储上限') +'），已跳过「'+file.name+'」'); return; }
-    const id=String(Date.now())+idx+Math.random().toString(16).slice(2,8);
+  for(const file of files){
+    if(file.size>MAX_FILE){ alert('文件「'+file.name+'」超过500MB上限，已跳过'); continue; }
+    const path=Date.now()+'_'+Math.random().toString(36).slice(2,8)+'_'+file.name;
     const row=document.createElement('div');
     row.className='glass-card !rounded-xl px-4 py-3 flex items-center gap-3 !bg-white/5';
     row.innerHTML=`<i class="fa ${TYPE_ICON[getFileType(file.name)]} ${TYPE_COLOR[getFileType(file.name)]}"></i>
       <div class="flex-1 min-w-0"><div class="text-sm text-slate-200 truncate">${escapeHtml(file.name)} <span class="text-xs text-slate-500">(${formatSize(file.size)})</span></div>
       <div class="w-full bg-slate-700/60 rounded-full h-1.5 mt-2"><div class="progbar h-1.5 rounded-full" style="width:0%"></div></div></div>
-      <span class="text-xs text-slate-400 shrink-0 w-16 text-right">准备中…</span>`;
+      <span class="text-xs text-slate-400 shrink-0 w-20 text-right">上传中…</span>`;
     statusBox.appendChild(row);
     const bar=row.querySelector('.progbar'), pct=row.lastElementChild;
-    bar.style.width='15%';
-    // 1) 生成缩略图（图片类型）
-    makeThumb(file).then(thumb=>{
-      bar.style.width='35%';
-      saveThumb(id,thumb);
-      // 2) 文件写入存储层（IndexedDB 大容量 / 自动降级兼容模式）
-      storeFile(id,file).then(store=>{
-        bar.style.width='85%';
-        // 3) 元数据存入 localStorage
-        const db=loadDB();
-        const meta={id,name:file.name,size:file.size,type:getFileType(file.name),time:new Date().toLocaleString(),uploader:session.username};
-        if(store.mode==='ls'){ meta.data=store.data; meta.thumb=thumb||''; }
-        db.files.unshift(meta);
-        saveDB(db);
-        bar.style.width='100%';
-        pct.textContent='✓ 已上传'; pct.classList.add('text-emerald-400');
-        reqCount++; addLog('用户 '+session.username+' 上传了文件「'+file.name+'」（'+formatSize(file.size)+'）','ok');
-        setTimeout(()=>row.remove(),1500);
-        renderFiles(); updateStats(); updateTypeChart();
-      }).catch(err=>{
-        if(err.message==='LS_LIMIT'){
-          pct.textContent='超出2MB'; pct.classList.add('text-red-400');
-          alert('文件「'+file.name+'」超过当前浏览器兼容模式的 2MB 上限，请用 Chrome/Edge 桌面浏览器打开本页面即可上传大文件');
-        }else{
-          pct.textContent='存储失败'; pct.classList.add('text-red-400');
-          addLog('文件「'+file.name+'」上传失败：'+(err&&err.message?err.message:err),'err');
-        }
-      });
-    });
-  });
+    try{
+      bar.style.width='20%';
+      const {error:upErr}=await supa.storage.from('files').upload(path,file);
+      if(upErr) throw upErr;
+      bar.style.width='80%';
+      const {error:dbErr}=await supa.from('files').insert({id:path,name:file.name,size:file.size,type:getFileType(file.name),uploader:session.username});
+      if(dbErr) throw dbErr;
+      await fetchAll();
+      bar.style.width='100%';
+      pct.textContent='✓ 已上传'; pct.classList.add('text-emerald-400');
+      reqCount++; addLog('用户 '+session.username+' 上传了「'+file.name+'」（'+formatSize(file.size)+'）','ok');
+      setTimeout(()=>row.remove(),1500);
+      renderFiles(); updateStats(); updateTypeChart();
+    }catch(e){
+      pct.textContent='失败'; pct.classList.add('text-red-400');
+      addLog('上传「'+file.name+'」失败：'+(e.message||e),'err');
+    }
+  }
 }
 
 /* ================= 预览 / 下载 / 删除 ================= */
 const previewModal=document.getElementById('preview-modal'), previewContent=document.getElementById('preview-content');
-let previewUrl=''; // 当前预览的 blob URL，关闭时释放
-async function getFileUrl(f){
-  if(f.data) return f.data; // 旧数据兼容
-  const blob=await idbGet(f.id);
-  return blob?URL.createObjectURL(blob):'';
+function filePublicUrl(f,w,h){
+  let url=SUPA_URL+'/storage/v1/object/public/files/'+f.id;
+  if(w) url+='?width='+w+(h?'&height='+h:'')+'&resize=cover';
+  return url;
 }
+async function getFileUrl(f){ return filePublicUrl(f); }
 window.openPreview=async function(id){
   const f=loadDB().files.find(x=>x.id===id); if(!f)return;
   previewModal.style.display='flex';
   previewContent.innerHTML='<div class="px-10 py-16 text-slate-400"><i class="fa fa-spinner fa-spin mr-2"></i>正在加载文件…</div>';
-  if(previewUrl&&previewUrl.startsWith('blob:')){ URL.revokeObjectURL(previewUrl); previewUrl=''; }
   try{
-    const url=await getFileUrl(f);
-    if(!url){ previewContent.innerHTML=docPreview(f); return; }
-    if(url.startsWith('blob:')) previewUrl=url;
+    const url=filePublicUrl(f);
     let html='';
     if(f.type==='image') html=`<div class="flex flex-col items-center gap-3">
-      <img src="${url}" class="max-w-[92vw] max-h-[80vh] object-contain rounded-xl shadow-2xl" onload="this.closest('.flex-col').querySelector('.psize').textContent='原图 '+this.naturalWidth+' × '+this.naturalHeight+' 像素 · ${formatSize(f.size)} · 未压缩显示'">
+      <img src="${url}" class="max-w-[92vw] max-h-[80vh] object-contain rounded-xl shadow-2xl" onload="this.closest('.flex-col').querySelector('.psize').textContent='原图 '+this.naturalWidth+' × '+this.naturalHeight+' 像素 · ${formatSize(f.size)}'">
       <div class="psize text-xs text-slate-400">读取图片信息中…</div>
     </div>`;
     else if(f.type==='video') html=`<video src="${url}" controls autoplay class="max-w-[92vw] max-h-[90vh] rounded-xl shadow-2xl"></video>`;
     else if(f.type==='text'&&f.size<1024*1024){
       try{
-        let txt='';
-        if(f.data){ const raw=atob(f.data.split(',')[1]||''); txt=decodeURIComponent(escape(raw)); }
-        else{ const blob=await idbGet(id); txt=blob?await blob.text():''; }
+        const resp=await fetch(url); const txt=await resp.text();
         html=`<div class="bg-slate-900 border border-white/10 rounded-2xl p-6 max-w-2xl max-h-[80vh] overflow-auto">
           <div class="text-white font-mono text-sm whitespace-pre-wrap">${escapeHtml(txt.slice(0,50000))}${txt.length>50000?'<span class="text-amber-400">\n\n……（内容过长已截断）</span>':''}</div></div>`;
       }catch(e){ html=docPreview(f); }
@@ -852,29 +865,32 @@ function docPreview(f){
     <button onclick="downloadFile('${f.id}')" class="mt-5 px-6 py-2.5 rounded-xl btn-primary"><i class="fa fa-download mr-1"></i>下载文件</button>
   </div>`;
 }
-document.getElementById('close-preview').onclick=()=>{ previewModal.style.display='none'; previewContent.innerHTML=''; if(previewUrl.startsWith('blob:')){ URL.revokeObjectURL(previewUrl); previewUrl=''; } };
-previewModal.onclick=e=>{ if(e.target===previewModal){ previewModal.style.display='none'; previewContent.innerHTML=''; if(previewUrl.startsWith('blob:')){ URL.revokeObjectURL(previewUrl); previewUrl=''; } } };
+document.getElementById('close-preview').onclick=()=>{ previewModal.style.display='none'; previewContent.innerHTML=''; };
+previewModal.onclick=e=>{ if(e.target===previewModal){ previewModal.style.display='none'; previewContent.innerHTML=''; } };
 window.downloadFile=async function(id){
   const f=loadDB().files.find(x=>x.id===id); if(!f)return;
-  reqCount++; addLog((session?session.username:'游客')+' 下载了文件「'+f.name+'」（'+formatSize(f.size)+'）','info');
-  try{
-    const url=await getFileUrl(f);
-    if(!url){ alert('文件内容读取失败，可能已被清理'); return; }
-    const a=document.createElement('a'); a.href=url; a.download=f.name; a.click();
-    setTimeout(()=>{ if(!f.data&&url.startsWith('blob:')) URL.revokeObjectURL(url); },15000);
-  }catch(e){ alert('下载失败：'+e.message); }
+  reqCount++; addLog((session?session.username:'游客')+' 下载了「'+f.name+'」（'+formatSize(f.size)+'）','info');
+  window.open(filePublicUrl(f),'_blank');
 };
-window.deleteFile=function(id){
+window.deleteFile=async function(id){
   const f=loadDB().files.find(x=>x.id===id);
   if(!f)return;
   if(!canDeleteFile(f)){ alert('无权限删除该文件：超级管理员可删除全部，管理员可删除普通用户内容，普通用户只能删除自己的'); return; }
   if(!confirm('确定删除文件「'+f.name+'」吗？此操作不可恢复。'))return;
-  const db=loadDB();
-  db.files=db.files.filter(x=>x.id!==id);
-  saveDB(db);
-  idbDel(id).catch(()=>{}); // 同步清理 IndexedDB 中的大文件内容
-  reqCount++; addLog((session?session.username:'未知')+' 删除了文件「'+f.name+'」（'+formatSize(f.size)+'）','warn');
+  // 本地立刻删除并刷新 UI（不卡页面）
+  dbCache.files=dbCache.files.filter(x=>x.id!==id);
   renderFiles(); updateStats(); updateTypeChart();
+  reqCount++; addLog((session?session.username:'未知')+' 删除了「'+f.name+'」','warn');
+  // 后台异步同步云端，不阻塞
+  (async()=>{
+    try{
+      const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
+      await Promise.race([supa.storage.from('files').remove([f.id]),timeout]);
+    }catch(e){ console.warn('Storage 删除超时或失败:',e); }
+    try{
+      await supa.from('files').delete().eq('id',id);
+    }catch(e){ console.warn('数据库记录删除失败:',e); }
+  })();
 };
 
 /* ================= 统计 / 仪表盘 ================= */
@@ -883,56 +899,64 @@ function updateStats(){
   document.getElementById('stat-count').textContent=files.length;
   document.getElementById('stat-size').textContent=formatSize(files.reduce((s,f)=>s+f.size,0));
 }
+/* 真实检测 Supabase 服务器：测延迟 + 数据库状态 */
+async function pingSupabase(){
+  const t0=performance.now();
+  try{
+    const timeoutPromise=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),8000));
+    const q=supa.from('users').select('username',{count:'exact',head:true});
+    const {error}=await Promise.race([q,timeoutPromise]);
+    supaLatency=Math.round(performance.now()-t0);
+    if(error){ supaReady=false; supaStatus='数据库错误'; }
+    else{ supaReady=true; supaStatus='已连接'; }
+  }catch(e){
+    supaLatency=Math.round(performance.now()-t0);
+    if(e.message==='timeout'){ supaReady=false; supaStatus='连接超时(离线模式)'; }
+    else{ supaReady=false; supaStatus='无法连接'; }
+  }
+}
 function updateDashboard(){
   document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart);
   document.getElementById('dash-fcount').textContent=loadDB().files.length;
   document.getElementById('dash-role').textContent=isLogin()?roleName(session.role):'游客';
-  // 内存 / CPU 模拟波动
-  const mem=Math.floor(Math.random()*35+25);
-  document.getElementById('dash-mem').textContent=mem+'%';
-  document.getElementById('dash-mem-bar').style.width=mem+'%';
-  const cpu=Math.floor(Math.random()*60+15);
-  document.getElementById('dash-cpu').textContent=cpu+'%';
-  document.getElementById('dash-cpu-bar').style.width=cpu+'%';
-  // 磁盘占用（真实配额读取）
+  // 服务器状态：真实 Supabase 检测
+  const memEl=document.getElementById('dash-mem');
+  if(memEl){
+    memEl.textContent=supaReady?supaLatency+' ms':'连接中';
+    document.getElementById('dash-mem-bar').style.width=Math.min(100,Math.max(5,100-supaLatency))+'%';
+  }
+  const cpuEl=document.getElementById('dash-cpu');
+  if(cpuEl){
+    cpuEl.textContent=supaStatus;
+    cpuEl.className=supaReady?'text-emerald-400':'text-red-400';
+    document.getElementById('dash-cpu-bar').style.width=supaReady?'100%':'15%';
+  }
   refreshDisk();
-  // 网络下行模拟（平滑波动）
-  document.getElementById('dash-net').textContent=(Math.random()*400+60).toFixed(0)+' KB/s';
+  document.getElementById('dash-net').textContent=supaReady?(supaLatency+'ms 延迟'):'-';
   document.getElementById('dash-req').textContent=reqCount;
-  // 在线用户：真实活跃会话数
-  document.getElementById('dash-online').textContent=onlineCount();
-  const s=loadDB().stats;
-  document.getElementById('dash-today').textContent=(s&&s.todayVisits)||0;
-  // 刷新时间
+  refreshOnline();
+  refreshDisk();
   document.getElementById('dash-refresh').textContent='更新于 '+new Date().toLocaleTimeString();
   updateTypeChart();
 }
-/* 磁盘占用：读取浏览器真实存储配额，显示「已用 / 总配额」 */
+/* 磁盘占用：统计云端 Supabase Storage 文件总大小 */
 async function refreshDisk(){
   const diskEl=document.getElementById('dash-disk'), barEl=document.getElementById('dash-disk-bar');
   if(!diskEl)return;
   try{
-    if(navigator.storage&&navigator.storage.estimate){
-      const est=await navigator.storage.estimate();
-      if(est&&est.quota){
-        const used=est.usage||0, quota=est.quota;
-        const pct=Math.min(100,Math.round(used/quota*100));
-        diskEl.textContent=formatSize(used)+' / '+formatSize(quota);
-        barEl.style.width=pct+'%';
-        return;
-      }
-    }
-  }catch(e){}
-  // 兜底：按 localStorage 占用估算
-  try{
-    const used=(localStorage.getItem(DB_KEY)||'').length;
-    diskEl.textContent=formatSize(used)+' / ~5 MB';
-    barEl.style.width=Math.min(100,used/(5*1024*1024)*100)+'%';
-  }catch(e){}
+    const files=loadDB().files;
+    const used=files.reduce((s,f)=>s+(f.size||0),0);
+    const quota=1024*1024*1024; // Supabase 免费版 1GB
+    const pct=Math.min(100,Math.round(used/quota*100));
+    diskEl.textContent=formatSize(used)+' / 1 GB';
+    barEl.style.width=pct+'%';
+  }catch(e){
+    diskEl.textContent='读取中';
+  }
 }
 function updateMemChart(){
   if(!memChart)return;
-  memPoints.push(Math.floor(Math.random()*35+25));
+  memPoints.push(supaLatency||120);
   if(memPoints.length>20)memPoints.shift();
   memChart.data.labels=memPoints.map((_,i)=>i+'');
   memChart.data.datasets[0].data=memPoints;
@@ -940,7 +964,7 @@ function updateMemChart(){
 }
 function updateCpuChart(){
   if(!cpuChart)return;
-  cpuPoints.push(Math.floor(Math.random()*60+15));
+  cpuPoints.push(supaReady?100:30);
   if(cpuPoints.length>20)cpuPoints.shift();
   cpuChart.data.labels=cpuPoints.map((_,i)=>i+'');
   cpuChart.data.datasets[0].data=cpuPoints;
@@ -959,7 +983,7 @@ function updateTypeChart(){
     },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#cbd5e1'}}}}});
   }else{ typeChart.data.datasets[0].data=data; typeChart.update('none'); }
 }
-/* 实时日志系统 */
+/* 实时日志系统（云端共享，所有人可见） */
 const LOG_COLORS={info:'text-slate-300',ok:'text-emerald-300',warn:'text-amber-300',err:'text-red-300',sys:'text-indigo-300'};
 function addLog(msg,type){
   type=type||'info';
@@ -967,6 +991,20 @@ function addLog(msg,type){
   logHistory.push({t,msg,type});
   if(logHistory.length>100)logHistory.shift();
   renderLogs();
+  try{ supa.from('logs').insert({msg,type,username:session?session.username:'游客'}); }catch(e){}
+}
+async function pullLogs(){
+  try{
+    const {data}=await supa.from('logs').select('msg,type,username,created_at').order('created_at',{ascending:false}).limit(50);
+    if(data&&data.length>0){
+      logHistory=data.reverse().map(r=>({
+        t:(r.created_at||'').slice(11,19),
+        msg:(r.username?('['+r.username+'] '):'')+r.msg,
+        type:r.type||'info'
+      }));
+      renderLogs();
+    }
+  }catch(e){}
 }
 function renderLogs(){
   const box=document.getElementById('log-list');
@@ -976,35 +1014,33 @@ function renderLogs(){
   ).join('');
   box.scrollTop=box.scrollHeight;
 }
-/* 心跳日志（仅仪表盘可见时） */
+/* 心跳（不自动产生日志） */
 let heartbeat=0;
 function heartbeatTick(){
   if(currentView!=='dashboard')return;
   heartbeat++;
-  const events=['后台服务心跳检测正常','缓存清理任务执行完成','定时任务调度器已唤醒','数据库连接池状态正常','静态资源检查通过'];
-  addLog('系统 · '+events[heartbeat%events.length],'sys');
-  if(heartbeat%6===0) addLog('心跳 · 5秒周期运行中，累计心跳 '+heartbeat+' 次','ok');
 }
-/* 真实在线统计：每个活跃会话（标签页）心跳登记，5 分钟未活跃自动下线 */
+/* 云端在线统计：presence 表心跳，5 分钟未活跃自动离线 */
 let myVid='';
-function trackVisitors(){
-  const db=loadDB();
-  if(!db.stats) db.stats={};
-  if(!db.stats.visitors) db.stats.visitors={};
+async function trackVisitors(){
   if(!myVid){
-    myVid=sessionStorage.getItem('fh_vid')||('v'+Date.now().toString(36)+Math.random().toString(36).slice(2,6));
+    myVid=sessionStorage.getItem('fh_vid')||('v'+Date.now().toString(36)+Math.random().toString(36).slice(2,8));
     sessionStorage.setItem('fh_vid',myVid);
   }
-  const now=Date.now();
-  db.stats.visitors[myVid]={last:now};
-  Object.keys(db.stats.visitors).forEach(k=>{ if(now-db.stats.visitors[k].last>5*60*1000) delete db.stats.visitors[k]; });
-  const today=new Date().toDateString();
-  if(db.stats.day!==today){ db.stats.day=today; db.stats.todayVisits=(db.stats.todayVisits||0)+1; }
-  saveDB(db);
+  try{
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+    await Promise.race([supa.from('presence').upsert({vid:myVid,username:session?session.username:'游客',last_active:new Date().toISOString()}),timeout]);
+  }catch(e){}
 }
-function onlineCount(){
-  const s=loadDB().stats;
-  return s&&s.visitors?Object.keys(s.visitors).length:0;
+async function refreshOnline(){
+  try{
+    const cutoff=new Date(Date.now()-1*60*1000).toISOString();
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),5000));
+    await Promise.race([supa.from('presence').delete().lt('last_active',cutoff),timeout]);
+    const {count}=await supa.from('presence').select('vid',{count:'exact',head:true});
+    const el=document.getElementById('dash-online');
+    if(el) el.textContent=count||0;
+  }catch(e){}
 }
 (function initCharts(){
   const mctx=document.getElementById('chart-mem');
@@ -1069,19 +1105,22 @@ document.getElementById('btn-add-user').onclick=()=>{
 };
 document.getElementById('cancel-au').onclick=()=>addUserModal.style.display='none';
 addUserModal.onclick=e=>{ if(e.target===addUserModal) addUserModal.style.display='none'; };
-document.getElementById('confirm-au').onclick=function(){
+document.getElementById('confirm-au').onclick=async function(){
   const u=document.getElementById('au-user').value.trim(), p=document.getElementById('au-pass').value;
   const err=document.getElementById('au-err'); hideErr(err);
   if(!/^[a-zA-Z0-9_]{3,20}$/.test(u)){showErr(err,'账号需3-20位字母/数字/下划线');return;}
   if(p.length<6){showErr(err,'密码至少6位');return;}
-  const db=loadDB();
-  if(db.users.some(x=>x.username===u)){showErr(err,'该账号已存在');return;}
-  db.users.push({username:u,passHash:hashPassword(p),role:'admin',createdAt:new Date().toLocaleString()});
-  saveDB(db);
-  addUserModal.style.display='none';
-  renderUsers();
+  try{
+    const {data:ex}=await supa.from('users').select('username').eq('username',u).maybeSingle();
+    if(ex){showErr(err,'该账号已存在');return;}
+    const {error}=await supa.from('users').insert({username:u,pass_hash:hashPassword(p),role:'admin'});
+    if(error) throw error;
+    await fetchAll();
+    addUserModal.style.display='none';
+    renderUsers();
+  }catch(e){ showErr(err,'创建失败：'+(e.message||e)); }
 };
-window.removeUser=function(username){
+window.removeUser=async function(username){
   if(session.username===username){alert('不能删除当前登录的账号');return;}
   const db=loadDB();
   const u=db.users.find(x=>x.username===username);
@@ -1089,8 +1128,8 @@ window.removeUser=function(username){
   if(u.role==='super'){alert('超级管理员账号不可删除');return;}
   if(session.role==='admin'&&u.role!=='user'){alert('管理员只能删除普通用户账号');return;}
   if(!confirm('确定删除用户「'+username+'」吗？其上传的文件仍会保留。'))return;
-  db.users=db.users.filter(x=>x.username!==username);
-  saveDB(db);
+  await supa.from('users').delete().eq('username',username);
+  await fetchAll();
   renderUsers();
 };
 window.openReset=function(username){
@@ -1102,16 +1141,17 @@ window.openReset=function(username){
 };
 document.getElementById('cancel-reset').onclick=()=>document.getElementById('reset-modal').style.display='none';
 document.getElementById('reset-modal').onclick=e=>{ if(e.target===document.getElementById('reset-modal')) document.getElementById('reset-modal').style.display='none'; };
-document.getElementById('confirm-reset').onclick=function(){
+document.getElementById('confirm-reset').onclick=async function(){
   const p=document.getElementById('reset-pass').value, err=document.getElementById('reset-err');
   hideErr(err);
   if(p.length<6){showErr(err,'密码至少6位');return;}
-  const db=loadDB(), user=db.users.find(x=>x.username===resetTarget);
-  if(!user){showErr(err,'账号不存在');return;}
-  user.passHash=hashPassword(p);
-  saveDB(db);
-  document.getElementById('reset-modal').style.display='none';
-  renderUsers();
+  try{
+    const {error}=await supa.from('users').update({pass_hash:hashPassword(p)}).eq('username',resetTarget);
+    if(error) throw error;
+    await fetchAll();
+    document.getElementById('reset-modal').style.display='none';
+    renderUsers();
+  }catch(e){ showErr(err,'重置失败：'+(e.message||e)); }
 };
 
 /* ================= 修改自己的密码 ================= */
@@ -1123,7 +1163,7 @@ document.getElementById('btn-pass-open').onclick=()=>{
 };
 document.getElementById('cancel-pass').onclick=()=>passModal.style.display='none';
 passModal.onclick=e=>{ if(e.target===passModal) passModal.style.display='none'; };
-document.getElementById('confirm-pass').onclick=function(){
+document.getElementById('confirm-pass').onclick=async function(){
   const oldp=document.getElementById('old-pass').value;
   const p1=document.getElementById('new-pass-1').value, p2=document.getElementById('new-pass-2').value;
   const err=document.getElementById('pass-err'); hideErr(err);
@@ -1132,10 +1172,13 @@ document.getElementById('confirm-pass').onclick=function(){
   if(me.passHash!==hashPassword(oldp)){showErr(err,'当前密码不正确');return;}
   if(p1.length<6){showErr(err,'新密码至少6位');return;}
   if(p1!==p2){showErr(err,'两次输入的新密码不一致');return;}
-  me.passHash=hashPassword(p1);
-  saveDB(db);
-  passModal.style.display='none';
-  alert('密码修改成功，请牢记新密码');
+  try{
+    const {error}=await supa.from('users').update({pass_hash:hashPassword(p1)}).eq('username',session.username);
+    if(error) throw error;
+    await fetchAll();
+    passModal.style.display='none';
+    alert('密码修改成功，请牢记新密码');
+  }catch(e){ showErr(err,'修改失败：'+(e.message||e)); }
 };
 
 /* ================= 导航管理（超级管理员） ================= */
@@ -1154,7 +1197,7 @@ function renderNavList(){
     box.appendChild(row);
   });
 }
-document.getElementById('btn-add-nav').onclick=function(){
+document.getElementById('btn-add-nav').onclick=async function(){
   const name=document.getElementById('nav-name').value.trim();
   const url=document.getElementById('nav-url').value.trim();
   const icon=document.getElementById('nav-icon').value.trim()||'fa-link';
@@ -1163,20 +1206,21 @@ document.getElementById('btn-add-nav').onclick=function(){
   const db=loadDB();
   if(!db.settings.navLinks) db.settings.navLinks=[];
   db.settings.navLinks.push({name,url,icon,target:'_self'});
-  saveDB(db);
+  await saveSetting('nav_links',db.settings.navLinks);
   document.getElementById('nav-name').value='';
   document.getElementById('nav-url').value='';
   document.getElementById('nav-icon').value='';
   renderNavList(); renderNav();
 };
-window.removeNav=function(i){
+window.removeNav=async function(i){
   if(!confirm('确定删除该导航按钮吗？'))return;
   const db=loadDB();
   if(!db.settings.navLinks) return;
   db.settings.navLinks.splice(i,1);
-  saveDB(db);
+  await saveSetting('nav_links',db.settings.navLinks);
   renderNavList(); renderNav();
 };
+
 
 /* ================= 外观设置（背景） ================= */
 function renderSettings(){
@@ -1204,20 +1248,21 @@ function setBg(value,isGlobal){
   if(isGlobal){
     if(!db.settings) db.settings={};
     db.settings.globalBg=value;
+    saveSetting('global_bg',value);
   }else if(session){
     if(!db.prefs) db.prefs={};
     if(!db.prefs[session.username]) db.prefs[session.username]={};
     db.prefs[session.username].bg=value;
+    try{ localStorage.setItem('bg_'+session.username,value); }catch(e){}
   }
-  saveDB(db);
   applyBg(); renderSettings();
 }
 function applyBg(){
   const db=loadDB();
   let bg=PRESET_BGS[0].css;
   if(db&&db.settings&&db.settings.globalBg) bg=db.settings.globalBg;
-  if(session&&db&&db.prefs&&db.prefs[session.username]&&db.prefs[session.username].bg) bg=db.prefs[session.username].bg;
-  if(bg.startsWith('data:')){
+  if(session){ try{ const local=localStorage.getItem('bg_'+session.username); if(local) bg=local; }catch(e){} }
+  if(bg.startsWith('data:')||bg.startsWith('http')){
     document.body.className='has-bg';
     document.body.style.backgroundImage='url('+bg+')';
   }else{
@@ -1269,33 +1314,32 @@ document.getElementById('btn-bg-global').onclick=()=>{
 };
 
 /* ================= 页面初始化 ================= */
-initDB();
-if(session&&!loadDB().users.some(u=>u.username===session.username)){
-  clearSession(); session=null;
+async function boot(){
+  await pingSupabase();
+  await fetchAll();
+  if(session&&!dbCache.users.some(u=>u.username===session.username)){
+    clearSession(); session=null;
+  }
+  trackVisitors();
+  refreshDisk();
+  renderNav();
+  applyBg();
+  renderFiles();
+  updateStats();
+  updateTypeChart();
+  switchView('files');
 }
-addLog('FileHub Pro v3.0 服务启动完成','sys');
-addLog('本地数据加载完成 · 当前共 '+loadDB().files.length+' 个文件、'+loadDB().users.length+' 个账号','sys');
-// 存储能力自检：决定大容量 / 兼容模式
-probeStorage().then(mode=>{
-  storageMode=mode;
-  addLog('存储模式：'+(mode==='idb'?'大容量存储 IndexedDB（单文件≤500MB）':'兼容模式 localStorage（单文件≤2MB，建议用 Chrome/Edge 桌面浏览器解锁大文件）'),mode==='idb'?'ok':'warn');
-  if(mode==='idb') migrateLegacyData(); // 兼容迁移：旧 base64 文件自动迁入大容量存储
-});
-trackVisitors(); // 登记当前会话
-refreshDisk();
-renderNav();
-applyBg();
-renderFiles();
-updateStats();
-switchView('files');
+boot();
 
 // 定时器（低频刷新，避免卡顿）
-setInterval(()=>{ if(currentView==='dashboard') updateDashboard(); },5000);
+setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },5000);
 setInterval(updateMemChart,5000);
 setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
 setInterval(trackVisitors,30000); // 会话心跳：30 秒一次
 setInterval(()=>{ if(currentView==='dashboard') document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart); },1000);
+// 启动后拉一次云端日志
+setTimeout(pullLogs,2000);
 </script>
 </body>
 </html>
