@@ -1343,6 +1343,12 @@ function syncAfterAction(){
     if(currentView==='dashboard'){ pullLogs(); refreshOnline(); }
   },2000);
 }
+// 每2秒自动拉一次日志，同步别人的操作
+setInterval(()=>{
+  if(currentView==='dashboard'){
+    pullLogs();
+  }
+},2000);
 // 仪表盘每1秒自动刷新一次
 setInterval(()=>{
   if(currentView==='dashboard'){
