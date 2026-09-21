@@ -1345,13 +1345,20 @@ async function syncAllData(){
       pullLogs(),      // 同步日志
       refreshOnline()  // 同步在线人数
     ]);
+    // 刷新导航
+    renderNav();
+    // 刷新文件列表
     if(currentView==='files') renderFiles();
+    // 刷新仪表盘
     if(currentView==='dashboard'){
       updateStats();
       updateTypeChart();
       refreshDisk();
       refreshOnline();
+      updateDashboard();
     }
+    // 刷新导航管理页面
+    if(currentView==='navs') renderNavList();
   }catch(e){ console.warn('同步失败:', e); }
 }
 
