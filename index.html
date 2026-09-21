@@ -918,6 +918,7 @@ async function pingSupabase(){
     if(e.message==='timeout'){ supaReady=false; supaStatus='连接超时(离线模式)'; }
     else{ supaReady=false; supaStatus='无法连接'; }
   }
+  updateDashboard();
 }
 function updateDashboard(){
   document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart);
