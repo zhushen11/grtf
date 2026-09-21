@@ -126,7 +126,7 @@ tailwind.config={theme:{extend:{colors:{
     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
       <div>
         <h2 class="text-2xl font-bold text-white">服务器运行状态</h2>
-        <p class="text-slate-400 text-sm mt-1">后台服务实时监测 · <span id="dash-refresh" class="text-slate-100">刚刚更新</span></p>
+        <p class="text-slate-400 text-sm mt-1">后台服务实时监测 · <span id="dash-refresh" class="text-slate-500">刚刚更新</span></p>
       </div>
       <div class="flex items-center gap-3">
         <span class="flex items-center gap-2 px-4 py-2 rounded-full bg-success/15 text-success text-sm font-medium border border-success/30">
@@ -1332,7 +1332,7 @@ async function boot(){
 boot();
 
 // 定时器（低频刷新，避免卡顿）
-setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },5000);
+setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },1000);
 setInterval(updateMemChart,5000);
 setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
@@ -1340,6 +1340,19 @@ setInterval(trackVisitors,30000); // 会话心跳：30 秒一次
 setInterval(()=>{ if(currentView==='dashboard') document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart); },1000);
 // 启动后拉一次云端日志
 setTimeout(pullLogs,2000);
+/* Realtime 实时订阅日志表 */
+supa.channel('logs-realtime')
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'logs'},payload=>{
+    const r=payload.new;
+    logHistory.push({
+      t:new Date(r.created_at).toLocaleTimeString(),
+      msg:(r.username?('['+r.username+'] '):'')+r.msg,
+      type:r.type||'info'
+    });
+    if(logHistory.length>200)logHistory.shift();
+    renderLogs();
+  })
+  .subscribe();
 </script>
 </body>
 </html>
