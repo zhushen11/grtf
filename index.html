@@ -386,6 +386,7 @@ const PRESET_BGS=[
 /* ================= Supabase 云端配置 ================= */
 const SUPA_URL='https://gykqzvmjohilsxzopdwe.supabase.co';
 const SUPA_KEY='sb_publishable_4SuKagnYKc8bwCGo_FbzWg_UwMivbEB';
+  
 const supa=supabase.createClient(SUPA_URL,SUPA_KEY);
 let dbCache={users:[],files:[],settings:{globalBg:'',navLinks:[]},prefs:{}};
 let supaReady=false, supaLatency=0, supaStatus='正在连接...';
