@@ -1337,18 +1337,31 @@ async function boot(){
 }
 boot();
 
-// 操作后2秒自动同步
-function syncAfterAction(){
-  setTimeout(()=>{
-    if(currentView==='dashboard'){ pullLogs(); refreshOnline(); }
-  },2000);
+// 所有数据实时同步：每2秒自动拉取所有数据
+async function syncAllData(){
+  try{
+    await Promise.all([
+      fetchAll(),      // 同步所有文件和用户数据
+      pullLogs(),      // 同步日志
+      refreshOnline()  // 同步在线人数
+    ]);
+    if(currentView==='files') renderFiles();
+    if(currentView==='dashboard'){
+      updateStats();
+      updateTypeChart();
+      refreshDisk();
+      refreshOnline();
+    }
+  }catch(e){ console.warn('同步失败:', e); }
 }
-// 每2秒自动拉一次日志，同步别人的操作
-setInterval(()=>{
-  if(currentView==='dashboard'){
-    pullLogs();
-  }
-},2000);
+
+// 每2秒自动同步所有数据
+setInterval(syncAllData, 2000);
+
+// 操作后立即同步
+function syncAfterAction(){
+  setTimeout(syncAllData, 1000);
+}
 // 仪表盘每1秒自动刷新一次
 setInterval(()=>{
   if(currentView==='dashboard'){
@@ -1369,7 +1382,7 @@ async function wakeUpSupabase(){
     await supa.from('users').select('count');
     const t1=performance.now();
     console.log('Supabase 已唤醒，延迟:', Math.round(t1-t0)+'ms');
-    await pullLogs();
+    await syncAllData();
   }catch(e){
     console.warn('唤醒失败:', e);
     setTimeout(wakeUpSupabase, 5000); // 5秒后重试
