@@ -558,6 +558,7 @@ async function doLogin(){
     setSession(session);
     reqCount++; addLog('账号 '+data.username+' 登录成功（'+roleName(data.role)+'）','ok');
     closeAuth(); renderNav(); applyBg(); switchView('dashboard');
+syncAfterAction();
   }catch(e){ showErr(err,'登录失败：'+(e.message||e)); }
 }
 document.getElementById('btn-reg').onclick=doRegister;
@@ -582,6 +583,7 @@ async function doRegister(){
     closeAuth(); renderNav(); applyBg();
     alert('注册成功！欢迎 '+u+'，已自动登录。');
     switchView('dashboard');
+syncAfterAction();
   }catch(e){ showErr(err,'注册失败：'+(e.message||e)); }
 }
 document.getElementById('btn-logout').onclick=()=>{
@@ -817,6 +819,7 @@ async function handleFiles(files){
       reqCount++; addLog('用户 '+session.username+' 上传了「'+file.name+'」（'+formatSize(file.size)+'）','ok');
       setTimeout(()=>row.remove(),1500);
       renderFiles(); updateStats(); updateTypeChart();
+syncAfterAction();
     }catch(e){
       pct.textContent='失败'; pct.classList.add('text-red-400');
       addLog('上传「'+file.name+'」失败：'+(e.message||e),'err');
@@ -892,6 +895,7 @@ window.deleteFile=async function(id){
     }catch(e){ console.warn('数据库记录删除失败:',e); }
   })();
 };
+syncAfterAction();
 
 /* ================= 统计 / 仪表盘 ================= */
 function updateStats(){
@@ -1131,6 +1135,7 @@ window.removeUser=async function(username){
   await supa.from('users').delete().eq('username',username);
   await fetchAll();
   renderUsers();
+syncAfterAction();
 };
 window.openReset=function(username){
   resetTarget=username;
@@ -1331,13 +1336,18 @@ async function boot(){
 }
 boot();
 
-// 定时器（低频刷新，避免卡顿）
-setInterval(()=>{ if(currentView==='dashboard'){ pingSupabase(); updateDashboard(); pullLogs(); } },1000);
+// 操作后2秒自动同步
+function syncAfterAction(){
+  setTimeout(()=>{
+    if(currentView==='dashboard'){ pullLogs(); refreshOnline(); }
+  },2000);
+}
 setInterval(updateMemChart,5000);
 setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
 setInterval(trackVisitors,30000); // 会话心跳：30 秒一次
 setInterval(()=>{ if(currentView==='dashboard') document.getElementById('dash-uptime').textContent=formatTime(Date.now()-appStart); },1000);
+
 // 启动后拉一次云端日志
 setTimeout(pullLogs,2000);
 /* Realtime 实时订阅日志表 */
