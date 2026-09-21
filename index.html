@@ -1339,6 +1339,7 @@ boot();
 
 // 记录上次同步的数据，只有变化才重新渲染
 let lastSyncHash = '';
+let serverStartTime = Date.now();
 
 async function syncAllData(){
   try{
@@ -1351,24 +1352,19 @@ async function syncAllData(){
       refreshOnline()
     ]);
     
-    // 只在数据变化时才重新渲染，避免闪烁
     const newFilesLen = dbCache.files.length;
     const newNavLen = (dbCache.settings.navLinks||[]).length;
     
-    // 刷新导航（每次都刷新，因为导航数据小）
     renderNav();
     
-    // 只有文件数量变化才刷新文件列表
     if(oldFilesLen !== newFilesLen && currentView==='files'){
       renderFiles();
     }
     
-    // 只有导航数量变化才刷新导航管理页面
     if(oldNavLen !== newNavLen && currentView==='navs'){
       renderNavList();
     }
     
-    // 仪表盘始终刷新（因为有时间在走）
     if(currentView==='dashboard'){
       updateStats();
       updateTypeChart();
