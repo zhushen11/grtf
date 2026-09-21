@@ -990,13 +990,16 @@ function updateTypeChart(){
 }
 /* 实时日志系统（云端共享，所有人可见） */
 const LOG_COLORS={info:'text-slate-300',ok:'text-emerald-300',warn:'text-amber-300',err:'text-red-300',sys:'text-indigo-300'};
-function addLog(msg,type){
+async function addLog(msg,type){
   type=type||'info';
   const t=new Date().toLocaleTimeString();
   logHistory.push({t,msg,type});
   if(logHistory.length>100)logHistory.shift();
   renderLogs();
-  try{ supa.from('logs').insert({msg,type,username:session?session.username:'游客'}); }catch(e){}
+  try{
+    const {error}=await supa.from('logs').insert({msg,type,username:session?session.username:'游客'});
+    if(error) console.error('日志写入失败:', error);
+  }catch(e){ console.error('日志写入错误:', e); }
 }
 async function pullLogs(){
   try{
