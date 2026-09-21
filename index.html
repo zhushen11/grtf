@@ -1342,6 +1342,12 @@ function syncAfterAction(){
     if(currentView==='dashboard'){ pullLogs(); refreshOnline(); }
   },2000);
 }
+// 仪表盘每1秒自动刷新一次
+setInterval(()=>{
+  if(currentView==='dashboard'){
+    pingSupabase();
+  }
+},1000);
 setInterval(updateMemChart,5000);
 setInterval(updateCpuChart,5000);
 setInterval(heartbeatTick,10000);
