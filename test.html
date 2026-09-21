@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>测试 Supabase 连接</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<h2>测试 Supabase 连接</h2>
+<div id="r">连接中...</div>
+<script>
+const supa=supabase.createClient(
+  'https://gykqzvmjohilsxzopdwe.supabase.co',
+  'sb_publishable_4SuKagnYKc8bwCGo_FbzWg_UwMivbEB'
+);
+supa.from('users').select('*').then(({data,error})=>{
+  if(error) document.getElementById('r').innerHTML='❌ 错误: '+error.message;
+  else document.getElementById('r').innerHTML='✅ 成功！用户数: '+data.length;
+});
+</script>
+</body>
+</html>
