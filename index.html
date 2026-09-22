@@ -1403,7 +1403,7 @@ async function syncAllData(){
 
 // 每2秒自动同步所有数据
 setInterval(syncAllData, 2000);
-// 每5分钟自动清除一次实时日志
+// 每30分钟自动清除一次实时日志
 setInterval(async ()=>{
   try{
     await supa.from('logs').delete().neq('id', 0);
@@ -1412,6 +1412,8 @@ setInterval(async ()=>{
       type: 'info',
       username: '系统'
     });
+    // 更新"更新于"的时间
+    document.getElementById('dash-refresh').textContent='更新于 '+new Date().toLocaleTimeString();
     console.log('已自动清除日志');
   }catch(e){
     console.warn('自动清除日志失败:', e);
