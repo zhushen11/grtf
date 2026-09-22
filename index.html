@@ -873,7 +873,21 @@ previewModal.onclick=e=>{ if(e.target===previewModal){ previewModal.style.displa
 window.downloadFile=async function(id){
   const f=loadDB().files.find(x=>x.id===id); if(!f)return;
   reqCount++; addLog((session?session.username:'游客')+' 下载了「'+f.name+'」（'+formatSize(f.size)+'）','info');
-  window.open(filePublicUrl(f),'_blank');
+  try{
+    const url=filePublicUrl(f);
+    const res=await fetch(url);
+    const blob=await res.blob();
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=f.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  }catch(e){
+    console.error('下载失败:', e);
+    alert('下载失败，请长按图片保存到相册');
+  }
 };
 window.deleteFile=async function(id){
   const f=loadDB().files.find(x=>x.id===id);
